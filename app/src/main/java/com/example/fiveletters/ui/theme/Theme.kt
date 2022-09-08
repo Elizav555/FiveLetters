@@ -5,7 +5,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 
 private val LightColors = lightColorScheme(
     primary = light_primary,
@@ -70,17 +71,33 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun FiveLettersTheme(
-  useDarkTheme: Boolean = isSystemInDarkTheme(),
-  content: @Composable() () -> Unit
+    useDarkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable() () -> Unit
 ) {
-  val colors = if (!useDarkTheme) {
-    LightColors
-  } else {
-    DarkColors
-  }
+    val colors = if (!useDarkTheme) {
+        LightColors
+    } else {
+        DarkColors
+    }
 
-  MaterialTheme(
-    colorScheme = colors,
-    content = content
-  )
+    val commonColors = when {
+        useDarkTheme -> DarkCommonColorScheme
+        else -> LightCommonColorScheme
+    }
+
+    CompositionLocalProvider(
+        LocalCommonColors provides commonColors,
+    ) {
+        MaterialTheme(
+            colorScheme = colors,
+            content = content,
+        )
+    }
+}
+
+object FiveLettersTheme {
+    val commonColorScheme: CommonColorScheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalCommonColors.current
 }
