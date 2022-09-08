@@ -3,6 +3,7 @@ package com.example.fiveletters.home
 import androidx.lifecycle.ViewModel
 import com.example.fiveletters.home.events.UIEvent
 import com.example.fiveletters.home.state.UIState
+import com.example.fiveletters.home.utils.Letter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +32,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         if (word.count() >= lettersCount) {
             return@with
         }
-        val newWord = word.toMutableList().apply { add(letter) }
+        val newWord = word.toMutableList().apply { add(Letter(letter)) }
         _uiState.update { it.copy(word = newWord) }
     }
 

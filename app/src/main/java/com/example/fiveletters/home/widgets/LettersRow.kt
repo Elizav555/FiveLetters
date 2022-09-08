@@ -14,30 +14,40 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fiveletters.home.utils.Letter
+import com.example.fiveletters.home.utils.LetterState
 
 @Composable
-fun Letter(modifier: Modifier = Modifier, label: String) {
+fun LetterBox(modifier: Modifier = Modifier, letter: Letter) {
     val shape = RoundedCornerShape(4.dp)
     Box(
         modifier = modifier
             .clip(shape)
-            .background(Color.White)
+            .background(getColorByState(letter.state))
             .padding(vertical = 12.dp, horizontal = 8.dp), contentAlignment = Alignment.Center
     ) {
-        Text(text = label, fontSize = 32.sp)
+        Text(text = letter.symbol, fontSize = 32.sp)
     }
 }
 
+private fun getColorByState(state: LetterState): Color = when (state) {
+    LetterState.DEFAULT -> TODO()
+    LetterState.CORRECT -> TODO()
+    LetterState.WRONG_POSITION -> TODO()
+    LetterState.WRONG -> TODO()
+}
+
+
 @Composable
-fun LettersRow(letters: List<String>, count: Int) {
+fun LettersRow(letters: List<Letter>, count: Int) {
     Row(
         modifier = Modifier
             .wrapContentWidth()
             .background(color = Color.Gray)
     ) {
-        repeat(5) {
+        repeat(count) {
             val letter = letters.elementAtOrNull(it)
-            Letter(modifier = Modifier.weight(1f, fill = false), label = letter ?: "")
+            LetterBox(modifier = Modifier.weight(1f, fill = false), letter = letter ?: Letter(""))
         }
     }
 }
