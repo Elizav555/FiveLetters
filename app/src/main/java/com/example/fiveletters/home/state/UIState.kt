@@ -1,5 +1,6 @@
 package com.example.fiveletters.home.state
 
 data class UIState(
-    val word: String = "",
+    val word: List<String> = emptyList(),
+    val lettersCount: Int = 5
 )

@@ -1,97 +1,112 @@
 package com.example.fiveletters.home
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.fiveletters.home.events.ValidationEvent
+import com.example.fiveletters.R
+import com.example.fiveletters.home.events.UIEvent
 import com.example.fiveletters.home.state.UIState
+import com.example.fiveletters.home.utils.KeyClick
+import com.example.fiveletters.home.utils.myKeyboardKeys
+import com.example.fiveletters.home.widgets.Keyboard
+import com.example.fiveletters.home.widgets.LettersRow
 
 @Composable
 fun HomeScreen() {
     val viewModel = hiltViewModel<HomeViewModel>()
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
+    // val scope = rememberCoroutineScope()
+    // val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.validationFlow.collect {
-            when (it) {
-                is ValidationEvent.Success -> {}
-                is ValidationEvent.Error -> {}
-            }
-        }
+    val defaultKeyClick: KeyClick = { letter: String? ->
+        letter?.let { viewModel.onEvent(UIEvent.LetterAddedEvent(it)) }
     }
-    HomeScreenLayout(uiState)
+    val eraseKeyClick: KeyClick = { _ ->
+        viewModel.onEvent(UIEvent.ErasedEvent)
+    }
+    val submitKeyClick: KeyClick = { _ ->
+        viewModel.onEvent(UIEvent.SubmitEvent)
+    }
+
+    HomeScreenLayout(
+        uiState = uiState,
+        defaultKeyClick = defaultKeyClick,
+        eraseKeyClick = eraseKeyClick,
+        submitKeyClick = submitKeyClick
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreenLayout(
-    uiState: UIState
+    uiState: UIState,
+    defaultKeyClick: KeyClick,
+    eraseKeyClick: KeyClick,
+    submitKeyClick: KeyClick
 ) {
-    Scaffold() {
-        it
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            KeyRow(keys = listOf("Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"))
-            KeyRow(keys = listOf("A", "S", "D", "F", "G", "H", "J", "K", "L"))
-            KeyRow(keys = listOf("Z", "X", "C", "V", "B", "N", "M"))
-
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            SmallTopAppBar(
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
+                title = { Text(stringResource(id = R.string.app_name)) },
+                scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+            )
+        },
+        content = { padding ->
+            HomeContent(
+                paddingValues = padding,
+                uiState = uiState,
+                defaultKeyClick = defaultKeyClick,
+                eraseKeyClick = eraseKeyClick,
+                submitKeyClick = submitKeyClick
+            )
         }
-    }
+    )
 }
 
 @Composable
-fun Key(modifier: Modifier = Modifier, label: String, onClick: () -> Unit) {
-    val shape = RoundedCornerShape(4.dp)
-    Box(
-        modifier = modifier
-            .padding(2.dp)
-            .clip(shape)
-            .clickable(onClick = onClick)
-            .background(Color.White)
-            .padding(vertical = 12.dp, horizontal = 8.dp), contentAlignment = Alignment.Center
-    ) {
-        Text(text = label, fontSize = 20.sp)
-    }
-}
-
-@Composable
-fun KeyRow(keys: List<String>) {
-    Row(
+fun HomeContent(
+    paddingValues: PaddingValues,
+    uiState: UIState,
+    defaultKeyClick: KeyClick,
+    eraseKeyClick: KeyClick,
+    submitKeyClick: KeyClick
+) {
+    Column(
         modifier = Modifier
-            .wrapContentWidth()
-            .background(color = Color.Gray)
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(all = 8.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        keys.forEach {
-            Key(modifier = Modifier.weight(1f, fill = false), label = it, onClick = { })
-        }
+        Row(content = {
+            LettersRow(letters = uiState.word, count = uiState.lettersCount)
+        })
+        Keyboard(
+            keys = myKeyboardKeys(defaultKeyClick, eraseKeyClick, submitKeyClick)
+        )
     }
 }
+
