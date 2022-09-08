@@ -14,24 +14,47 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.fiveletters.home.events.ValidationEvent
+import com.example.fiveletters.home.state.UIState
 
 @Composable
 fun HomeScreen() {
-    HomeScreen(onBtnClicked = {})
+    val viewModel = hiltViewModel<HomeViewModel>()
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.validationFlow.collect {
+            when (it) {
+                is ValidationEvent.Success -> {}
+                is ValidationEvent.Error -> {}
+            }
+        }
+    }
+    HomeScreenLayout(uiState)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeScreen(
-    onBtnClicked: (Any?) -> Unit
+private fun HomeScreenLayout(
+    uiState: UIState
 ) {
     Scaffold() {
+        it
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Bottom,
@@ -63,7 +86,8 @@ fun Key(modifier: Modifier = Modifier, label: String, onClick: () -> Unit) {
 @Composable
 fun KeyRow(keys: List<String>) {
     Row(
-        modifier = Modifier.wrapContentWidth()
+        modifier = Modifier
+            .wrapContentWidth()
             .background(color = Color.Gray)
     ) {
         keys.forEach {
