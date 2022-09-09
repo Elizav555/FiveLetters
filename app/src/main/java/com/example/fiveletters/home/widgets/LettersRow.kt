@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fiveletters.home.utils.Letter
@@ -26,9 +28,8 @@ fun LetterBox(modifier: Modifier = Modifier, letter: Letter) {
     Box(
         modifier = modifier
             .padding(horizontal = 4.dp)
-            .defaultMinSize(minWidth = 52.dp)
             .border(BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary))
-            .background(getColorByState(letter.state))
+            .background(colorByState(letter.state))
             .padding(all = 8.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -37,7 +38,7 @@ fun LetterBox(modifier: Modifier = Modifier, letter: Letter) {
 }
 
 @Composable
-private fun getColorByState(state: LetterState): Color = when (state) {
+private fun colorByState(state: LetterState): Color = when (state) {
     LetterState.DEFAULT -> FiveLettersTheme.commonColorScheme.defaultBoxColor
     LetterState.CORRECT -> FiveLettersTheme.commonColorScheme.correctBoxColor
     LetterState.WRONG_POSITION -> FiveLettersTheme.commonColorScheme.wrongPositionBoxColor
@@ -47,11 +48,12 @@ private fun getColorByState(state: LetterState): Color = when (state) {
 
 @Composable
 fun LettersRow(
+    modifier: Modifier = Modifier,
     word: List<Letter>,
     count: Int,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(8.dp),
         horizontalArrangement = Arrangement.Center
@@ -63,5 +65,17 @@ fun LettersRow(
                 letter = letter ?: Letter(" ")
             )
         }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0x989a82)
+@Composable
+fun LettersRowPreview() {
+    Column() {
+        LettersRow(word = listOf(), count = 5)
+        LettersRow(
+            word = listOf(Letter("L"), Letter("I"), Letter("M"), Letter("B"), Letter("O")),
+            count = 5
+        )
     }
 }

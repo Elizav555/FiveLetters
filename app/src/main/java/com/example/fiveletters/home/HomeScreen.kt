@@ -178,6 +178,7 @@ private fun ShowDialog(dialogParams: DialogParams) {
 
 @Composable
 fun HomeContent(
+    modifier: Modifier = Modifier,
     paddingValues: PaddingValues,
     uiState: UIState,
     defaultKeyClick: KeyClick,
@@ -185,7 +186,7 @@ fun HomeContent(
     submitKeyClick: KeyClick
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(paddingValues)
             .padding(all = 8.dp),
