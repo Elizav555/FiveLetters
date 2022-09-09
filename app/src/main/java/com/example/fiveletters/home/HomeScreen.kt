@@ -10,17 +10,22 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fiveletters.R
+import com.example.fiveletters.home.events.GuessEvent
 import com.example.fiveletters.home.events.UIEvent
 import com.example.fiveletters.home.state.UIState
 import com.example.fiveletters.home.utils.KeyClick
@@ -35,6 +40,27 @@ fun HomeScreen() {
     // val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
+    LaunchedEffect(key1 = Unit) {
+        viewModel.guessEventFlow.collect {
+            when (it) {
+                is GuessEvent.RightGuess -> {
+                    //TODO
+                    snackbarHostState.showSnackbar(message = "Right Guess")
+                }
+                is GuessEvent.WrongGuess -> {
+                    //TODO
+                    snackbarHostState.showSnackbar(message = "Wrong Guess")
+                }
+                is GuessEvent.LastGuess -> {
+                    //TODO
+                    snackbarHostState.showSnackbar(message = "Last Guess")
+                }
+            }
+        }
+    }
 
     val defaultKeyClick: KeyClick = { letter: String? ->
         letter?.let { viewModel.onEvent(UIEvent.LetterAddedEvent(it)) }
@@ -50,7 +76,8 @@ fun HomeScreen() {
         uiState = uiState,
         defaultKeyClick = defaultKeyClick,
         eraseKeyClick = eraseKeyClick,
-        submitKeyClick = submitKeyClick
+        submitKeyClick = submitKeyClick,
+        snackbarHostState = snackbarHostState
     )
 }
 
@@ -60,9 +87,11 @@ private fun HomeScreenLayout(
     uiState: UIState,
     defaultKeyClick: KeyClick,
     eraseKeyClick: KeyClick,
-    submitKeyClick: KeyClick
+    submitKeyClick: KeyClick,
+    snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         modifier = Modifier.fillMaxSize(),
         topBar = {
             SmallTopAppBar(
@@ -102,7 +131,11 @@ fun HomeContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(content = {
-            LettersRow(letters = uiState.word, count = uiState.lettersCount)
+            LettersRow(
+                letters = uiState.word,
+                count = uiState.lettersCount,
+                attemptsCount = uiState.attempts
+            )
         })
         Keyboard(
             keys = myKeyboardKeys(defaultKeyClick, eraseKeyClick, submitKeyClick)

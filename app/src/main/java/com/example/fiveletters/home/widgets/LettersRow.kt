@@ -1,10 +1,16 @@
 package com.example.fiveletters.home.widgets
 
-import android.provider.CalendarContract
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +31,8 @@ fun LetterBox(modifier: Modifier = Modifier, letter: Letter) {
     val shape = RoundedCornerShape(4.dp)
     Box(
         modifier = modifier
+            .defaultMinSize(minWidth = 64.dp)
+            .border(BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary))
             .clip(shape)
             .background(getColorByState(letter.state))
             .padding(vertical = 12.dp, horizontal = 8.dp), contentAlignment = Alignment.Center
@@ -43,15 +51,29 @@ private fun getColorByState(state: LetterState): Color = when (state) {
 
 
 @Composable
-fun LettersRow(letters: List<Letter>, count: Int) {
-    Row(
-        modifier = Modifier
-            .wrapContentWidth()
-            .background(color = Color.Gray)
+fun LettersRow(letters: List<Letter>, count: Int, attemptsCount: Int) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top
     ) {
-        repeat(count) {
-            val letter = letters.elementAtOrNull(it)
-            LetterBox(modifier = Modifier.weight(1f, fill = false), letter = letter ?: Letter(""))
+        repeat(attemptsCount) {
+            Row(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .background(color = Color.Gray)
+                    .padding(8.dp)
+            ) {
+                repeat(count) {
+                    val letter = letters.elementAtOrNull(it)
+                    LetterBox(
+                        modifier = Modifier.weight(1f, fill = false),
+                        letter = letter ?: Letter(" ")
+                    )
+                }
+            }
         }
     }
 }
