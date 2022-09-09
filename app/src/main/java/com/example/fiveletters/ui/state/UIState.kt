@@ -1,4 +1,4 @@
-package com.example.fiveletters.home.state
+package com.example.fiveletters.ui.state
 
 import com.example.fiveletters.home.utils.Letter
 import com.example.fiveletters.home.utils.mockedDictionary

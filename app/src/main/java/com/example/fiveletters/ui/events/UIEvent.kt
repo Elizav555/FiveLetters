@@ -1,4 +1,4 @@
-package com.example.fiveletters.home.events
+package com.example.fiveletters.ui.events
 
 sealed class UIEvent {
     data class LetterAddedEvent(val letter: String) : UIEvent()

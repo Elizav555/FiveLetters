@@ -1,4 +1,4 @@
-package com.example.fiveletters.home.widgets
+package com.example.fiveletters.ui.widgets
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable

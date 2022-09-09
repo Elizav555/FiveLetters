@@ -1,4 +1,4 @@
-package com.example.fiveletters.home.events
+package com.example.fiveletters.ui.events
 
 sealed class GuessEvent {
     object RightGuess : GuessEvent()

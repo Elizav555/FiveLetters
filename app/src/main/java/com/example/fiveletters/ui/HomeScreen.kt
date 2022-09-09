@@ -29,14 +29,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fiveletters.R
-import com.example.fiveletters.home.events.GuessEvent
-import com.example.fiveletters.home.events.UIEvent
-import com.example.fiveletters.home.state.UIState
+import com.example.fiveletters.ui.events.GuessEvent
+import com.example.fiveletters.ui.events.UIEvent
+import com.example.fiveletters.ui.state.UIState
 import com.example.fiveletters.home.utils.DialogParams
 import com.example.fiveletters.home.utils.KeyClick
 import com.example.fiveletters.home.utils.myKeyboardKeys
-import com.example.fiveletters.home.widgets.Keyboard
-import com.example.fiveletters.home.widgets.LettersRow
+import com.example.fiveletters.ui.HomeViewModel
+import com.example.fiveletters.ui.widgets.Keyboard
+import com.example.fiveletters.ui.widgets.LettersRow
 
 @Composable
 fun HomeScreen() {

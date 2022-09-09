@@ -1,12 +1,12 @@
-package com.example.fiveletters.home
+package com.example.fiveletters.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fiveletters.home.events.GuessEvent
-import com.example.fiveletters.home.events.UIEvent
-import com.example.fiveletters.home.state.UIState
 import com.example.fiveletters.home.utils.Letter
 import com.example.fiveletters.home.utils.LetterState
+import com.example.fiveletters.ui.events.GuessEvent
+import com.example.fiveletters.ui.events.UIEvent
+import com.example.fiveletters.ui.state.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
