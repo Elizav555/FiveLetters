@@ -26,11 +26,11 @@ fun KeyBox(modifier: Modifier = Modifier, key: Key) {
         modifier = modifier
             .clickable(onClick = { key.keyClick(key.symbol) })
             .border(
-                width = 2.dp,
+                width = 3.dp,
                 shape = MaterialTheme.shapes.small,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            .padding(8.dp),
+            .padding(10.dp),
         text = key.symbol,
         textAlign = TextAlign.Center,
         fontSize = 22.sp,
