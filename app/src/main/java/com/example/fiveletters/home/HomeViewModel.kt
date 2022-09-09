@@ -57,19 +57,25 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                     newWord[it].state = LetterState.CORRECT
                 } else if (hiddenWord.contains(word[it].symbol)) {
                     newWord[it].state = LetterState.WRONG_POSITION
-                    newAttempts++
                 } else {
                     newWord[it].state = LetterState.WRONG
-                    newAttempts++
                 }
             }
-            _uiState.update { it.copy(word = newWord, attempts = newAttempts) }
             if (rightLettersCount == lettersCount) {
                 _guessEventChannel.send(GuessEvent.RightGuess)
             } else if (attempts > guessesCount) {
                 _guessEventChannel.send(GuessEvent.LastGuess)
             } else {
+                newAttempts++
                 _guessEventChannel.send(GuessEvent.WrongGuess)
+            }
+            val newHistory = history.toMutableList().apply { add(newWord) }
+            _uiState.update {
+                it.copy(
+                    word = emptyList(),
+                    attempts = newAttempts,
+                    history = newHistory
+                )
             }
         }
     }

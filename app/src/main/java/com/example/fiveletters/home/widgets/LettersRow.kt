@@ -51,7 +51,12 @@ private fun getColorByState(state: LetterState): Color = when (state) {
 
 
 @Composable
-fun LettersRow(letters: List<Letter>, count: Int, attemptsCount: Int) {
+fun LettersRow(
+    currentWord: List<Letter>,
+    history: List<List<Letter>>,
+    count: Int,
+    attemptsCount: Int
+) {
     Column(
         Modifier
             .fillMaxWidth()
@@ -59,15 +64,16 @@ fun LettersRow(letters: List<Letter>, count: Int, attemptsCount: Int) {
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        repeat(attemptsCount) {
+        repeat(attemptsCount) { attempts ->
             Row(
                 modifier = Modifier
                     .wrapContentWidth()
                     .background(color = Color.Gray)
                     .padding(8.dp)
             ) {
+                val word = history.getOrNull(attempts) ?: currentWord
                 repeat(count) {
-                    val letter = letters.elementAtOrNull(it)
+                    val letter = word.elementAtOrNull(it)
                     LetterBox(
                         modifier = Modifier.weight(1f, fill = false),
                         letter = letter ?: Letter(" ")

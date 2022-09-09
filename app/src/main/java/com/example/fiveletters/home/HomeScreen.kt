@@ -132,7 +132,8 @@ fun HomeContent(
     ) {
         Row(content = {
             LettersRow(
-                letters = uiState.word,
+                currentWord = uiState.word,
+                history = uiState.history,
                 count = uiState.lettersCount,
                 attemptsCount = uiState.attempts
             )
