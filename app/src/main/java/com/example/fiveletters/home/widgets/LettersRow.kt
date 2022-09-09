@@ -3,18 +3,17 @@ package com.example.fiveletters.home.widgets
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,14 +23,14 @@ import com.example.fiveletters.ui.theme.FiveLettersTheme
 
 @Composable
 fun LetterBox(modifier: Modifier = Modifier, letter: Letter) {
-    val shape = RoundedCornerShape(4.dp)
     Box(
         modifier = modifier
-            .defaultMinSize(minWidth = 64.dp)
+            .padding(horizontal = 4.dp)
+            .defaultMinSize(minWidth = 52.dp)
             .border(BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary))
-            .clip(shape)
             .background(getColorByState(letter.state))
-            .padding(vertical = 12.dp, horizontal = 8.dp), contentAlignment = Alignment.Center
+            .padding(all = 8.dp),
+        contentAlignment = Alignment.Center
     ) {
         Text(text = letter.symbol, fontSize = 32.sp)
     }
@@ -53,14 +52,14 @@ fun LettersRow(
 ) {
     Row(
         modifier = Modifier
-            .wrapContentWidth()
-            .background(color = Color.Gray)
-            .padding(8.dp)
+            .fillMaxWidth()
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.Center
     ) {
         repeat(count) {
             val letter = word.elementAtOrNull(it)
             LetterBox(
-                modifier = Modifier.weight(1f, fill = false),
+                modifier = Modifier.weight(1f, fill = true),
                 letter = letter ?: Letter(" ")
             )
         }

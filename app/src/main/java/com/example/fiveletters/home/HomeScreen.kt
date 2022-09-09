@@ -126,7 +126,12 @@ private fun HomeScreenLayout(
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 ),
-                title = { Text(stringResource(id = R.string.app_name)) },
+                title = {
+                    Text(
+                        stringResource(id = R.string.app_name),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                },
                 scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
             )
         },

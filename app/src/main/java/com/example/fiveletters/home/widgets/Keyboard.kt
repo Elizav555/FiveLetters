@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,8 +28,10 @@ fun KeyBox(modifier: Modifier = Modifier, key: Key) {
         modifier = modifier
             .clip(shape)
             .clickable(onClick = { key.keyClick(key.symbol) })
-            .background(Color.White)
-            .padding(vertical = 12.dp, horizontal = 8.dp), contentAlignment = Alignment.Center
+            .background(color=MaterialTheme.colorScheme.onSecondary)
+            .padding(8.dp)
+            .padding(vertical = 12.dp, horizontal = 8.dp),
+        contentAlignment = Alignment.Center
     ) {
         Text(text = key.symbol, fontSize = 20.sp)
     }
@@ -39,7 +42,6 @@ fun KeyRow(keys: List<Key>) {
     Row(
         modifier = Modifier
             .wrapContentWidth()
-            .background(color = Color.Gray)
     ) {
         keys.forEach {
             KeyBox(modifier = Modifier.weight(1f, fill = false), key = it)
