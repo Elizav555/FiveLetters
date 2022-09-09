@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">FiveLetters</string>
+    <string name="new_game">Start New Game</string>
+    <string name="dialog_win_title">Congrats! You won</string>
+    <string name="dialog_win_text">Let\'s start new game</string>
+    <string name="dialog_lost_title">Oops! You lost</string>
+    <string name="dialog_lost_text">Let\'s try again in new game</string>
 </resources>

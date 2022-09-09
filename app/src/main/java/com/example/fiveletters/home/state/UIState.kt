@@ -9,6 +9,6 @@ data class UIState(
     val word: List<Letter> = emptyList(),
     val history: List<List<Letter>> = emptyList(),
     val lettersCount: Int = 5,
-    val guessesCount: Int = 6,
+    val guessesCount: Int = 5,
     val attempts: Int = 1,
 )

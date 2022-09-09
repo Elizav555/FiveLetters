@@ -35,6 +35,9 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             is UIEvent.ErasedEvent -> {
                 onErase()
             }
+            is UIEvent.NewGameStartedEvent -> {
+                onNewGame()
+            }
         }
     }
 
@@ -47,6 +50,9 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun onSubmit() = with(_uiState.value) {
+        if (word.count() < lettersCount) {
+            return@with
+        }
         viewModelScope.launch {
             var rightLettersCount = 0
             val newWord = word.toMutableList()
@@ -63,7 +69,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             }
             if (rightLettersCount == lettersCount) {
                 _guessEventChannel.send(GuessEvent.RightGuess)
-            } else if (attempts > guessesCount) {
+            } else if (attempts == guessesCount) {
                 _guessEventChannel.send(GuessEvent.LastGuess)
             } else {
                 newAttempts++
@@ -86,5 +92,9 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         }
         val newWord = word.toMutableList().apply { removeLast() }
         _uiState.update { it.copy(word = newWord) }
+    }
+
+    private fun onNewGame() {
+        _uiState.update { UIState() }
     }
 }

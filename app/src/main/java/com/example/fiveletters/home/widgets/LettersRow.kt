@@ -3,14 +3,10 @@ package com.example.fiveletters.home.widgets
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -52,34 +48,21 @@ private fun getColorByState(state: LetterState): Color = when (state) {
 
 @Composable
 fun LettersRow(
-    currentWord: List<Letter>,
-    history: List<List<Letter>>,
+    word: List<Letter>,
     count: Int,
-    attemptsCount: Int
 ) {
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Top
+    Row(
+        modifier = Modifier
+            .wrapContentWidth()
+            .background(color = Color.Gray)
+            .padding(8.dp)
     ) {
-        repeat(attemptsCount) { attempts ->
-            Row(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .background(color = Color.Gray)
-                    .padding(8.dp)
-            ) {
-                val word = history.getOrNull(attempts) ?: currentWord
-                repeat(count) {
-                    val letter = word.elementAtOrNull(it)
-                    LetterBox(
-                        modifier = Modifier.weight(1f, fill = false),
-                        letter = letter ?: Letter(" ")
-                    )
-                }
-            }
+        repeat(count) {
+            val letter = word.elementAtOrNull(it)
+            LetterBox(
+                modifier = Modifier.weight(1f, fill = false),
+                letter = letter ?: Letter(" ")
+            )
         }
     }
 }
