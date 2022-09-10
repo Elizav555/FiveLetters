@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -31,7 +30,6 @@ import com.example.fiveletters.R
 import com.example.fiveletters.domain.model.Game
 import com.example.fiveletters.domain.model.KeyClick
 import com.example.fiveletters.domain.utils.myKeyboardKeys
-import com.example.fiveletters.ui.events.GuessEvent
 import com.example.fiveletters.ui.events.UIEvent
 import com.example.fiveletters.ui.state.DialogParams
 import com.example.fiveletters.ui.state.UIState
@@ -41,27 +39,10 @@ import com.example.fiveletters.ui.widgets.LettersRow
 @Composable
 fun HomeScreen() {
     val viewModel = hiltViewModel<HomeViewModel>()
-    // val scope = rememberCoroutineScope()
-    // val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember {
         SnackbarHostState()
-    }
-
-    LaunchedEffect(key1 = Unit) {
-        viewModel.guessEventFlow.collect {
-            when (it) {
-                is GuessEvent.RightGuess -> {
-                    //snackbarHostState.showSnackbar(message = "Right Guess")
-                    viewModel.onEvent(UIEvent.WonEvent)
-                }
-                is GuessEvent.LastGuess -> {
-                    //snackbarHostState.showSnackbar(message = "Last Guess")
-                    viewModel.onEvent(UIEvent.LostEvent)
-                }
-            }
-        }
     }
 
     val defaultKeyClick: KeyClick = { letter: String? ->

@@ -7,16 +7,13 @@ import com.example.fiveletters.domain.model.Game
 import com.example.fiveletters.domain.model.Letter
 import com.example.fiveletters.domain.model.LetterState
 import com.example.fiveletters.domain.model.Word
-import com.example.fiveletters.ui.events.GuessEvent
 import com.example.fiveletters.ui.events.UIEvent
 import com.example.fiveletters.ui.state.DialogParams
 import com.example.fiveletters.ui.state.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -24,9 +21,6 @@ import kotlinx.coroutines.launch
 class HomeViewModel @Inject constructor() : ViewModel() {
     private val _uiState: MutableStateFlow<UIState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<UIState> = _uiState
-
-    private val _guessEventChannel = Channel<GuessEvent>()
-    val guessEventFlow = _guessEventChannel.receiveAsFlow()
 
     private fun getInitialUIState() = UIState(
         game = Game(),
@@ -85,9 +79,9 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                 }
             }
             if (rightLettersCount == lettersCount) {
-                _guessEventChannel.send(GuessEvent.RightGuess)
+                onWonGame()
             } else if (attempts == guessesCount) {
-                _guessEventChannel.send(GuessEvent.LastGuess)
+                onLostGame()
             } else {
                 newAttempts++
             }
