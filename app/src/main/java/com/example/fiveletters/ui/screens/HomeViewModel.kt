@@ -43,12 +43,6 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             is UIEvent.NewGameStartedEvent -> {
                 onNewGame()
             }
-            is UIEvent.WonEvent -> {
-                onWonGame()
-            }
-            is UIEvent.LostEvent -> {
-                onLostGame()
-            }
         }
     }
 

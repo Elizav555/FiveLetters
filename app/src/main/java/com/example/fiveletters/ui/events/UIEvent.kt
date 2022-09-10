@@ -5,6 +5,4 @@ sealed class UIEvent {
     object ErasedEvent : UIEvent()
     object SubmitEvent : UIEvent()
     object NewGameStartedEvent : UIEvent()
-    object WonEvent : UIEvent()
-    object LostEvent : UIEvent()
 }
