@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fiveletters.domain.model.Letter
 import com.example.fiveletters.domain.model.LetterState
+import com.example.fiveletters.domain.model.Word
 import com.example.fiveletters.ui.theme.FiveLettersTheme
 
 @Composable
@@ -48,7 +49,7 @@ private fun colorByState(state: LetterState): Color = when (state) {
 @Composable
 fun LettersRow(
     modifier: Modifier = Modifier,
-    word: List<Letter>,
+    word: Word,
     count: Int,
 ) {
     Row(
@@ -58,7 +59,7 @@ fun LettersRow(
         horizontalArrangement = Arrangement.Center
     ) {
         repeat(count) {
-            val letter = word.elementAtOrNull(it)
+            val letter = word.letters.elementAtOrNull(it)
             LetterBox(
                 modifier = Modifier.weight(1f, fill = true),
                 letter = letter ?: Letter(" ")
@@ -70,10 +71,18 @@ fun LettersRow(
 @Preview(showBackground = true, backgroundColor = 0x989a82)
 @Composable
 fun LettersRowPreview() {
-    Column() {
-        LettersRow(word = listOf(), count = 5)
+    Column {
+        LettersRow(word = Word(), count = 5)
         LettersRow(
-            word = listOf(Letter("L"), Letter("I"), Letter("M"), Letter("B"), Letter("O")),
+            word = Word(
+                listOf(
+                    Letter("L"),
+                    Letter("I"),
+                    Letter("M"),
+                    Letter("B"),
+                    Letter("O")
+                )
+            ),
             count = 5
         )
     }

@@ -1,4 +1,7 @@
-package com.example.fiveletters.home.utils
+package com.example.fiveletters.domain.utils
+
+import com.example.fiveletters.domain.model.Key
+import com.example.fiveletters.domain.model.KeyClick
 
 fun myKeyboardKeys(defaultKeyClick: KeyClick, eraseKeyClick: KeyClick, submitKeyClick: KeyClick) =
     listOf(

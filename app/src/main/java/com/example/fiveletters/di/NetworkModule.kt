@@ -39,9 +39,11 @@ class NetworkModule {
     }
 
     @Provides
+    @Singleton
     fun provideConvertFactory(): GsonConverterFactory = GsonConverterFactory.create()
 
     @Provides
+    @Singleton
     fun provideClient(
         apiKeyInterceptor: Interceptor
     ) = OkHttpClient.Builder()
@@ -55,10 +57,12 @@ class NetworkModule {
         .build()
 
     @Provides
+    @Singleton
     fun provideWordsApi(retrofit: Retrofit): WordsApi = retrofit
         .create(WordsApi::class.java)
 
     @Provides
+    @Singleton
     fun provideRetrofit(
         okhttp: OkHttpClient,
         converterFactory: GsonConverterFactory,
