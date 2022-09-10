@@ -1,6 +1,6 @@
 package com.example.fiveletters.ui.state
 
-import com.example.fiveletters.home.utils.Letter
+import com.example.fiveletters.domain.model.Letter
 import com.example.fiveletters.home.utils.mockedDictionary
 
 data class UIState(
