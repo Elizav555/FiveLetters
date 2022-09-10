@@ -1,4 +1,4 @@
-package com.example.fiveletters.home
+package com.example.fiveletters.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +12,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -29,13 +28,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fiveletters.R
+import com.example.fiveletters.domain.model.Game
+import com.example.fiveletters.domain.model.KeyClick
+import com.example.fiveletters.domain.utils.myKeyboardKeys
 import com.example.fiveletters.ui.events.GuessEvent
 import com.example.fiveletters.ui.events.UIEvent
+import com.example.fiveletters.ui.state.DialogParams
 import com.example.fiveletters.ui.state.UIState
-import com.example.fiveletters.home.utils.DialogParams
-import com.example.fiveletters.home.utils.KeyClick
-import com.example.fiveletters.home.utils.myKeyboardKeys
-import com.example.fiveletters.ui.HomeViewModel
 import com.example.fiveletters.ui.widgets.Keyboard
 import com.example.fiveletters.ui.widgets.LettersRow
 
@@ -50,40 +49,16 @@ fun HomeScreen() {
         SnackbarHostState()
     }
 
-    val startNewGame = {
-        viewModel.onEvent(UIEvent.NewGameStartedEvent)
-    }
-
-    val dialogParams = remember {
-        DialogParams(confirmAction = startNewGame)
-    }
-
     LaunchedEffect(key1 = Unit) {
         viewModel.guessEventFlow.collect {
             when (it) {
                 is GuessEvent.RightGuess -> {
                     //snackbarHostState.showSnackbar(message = "Right Guess")
-                    dialogParams.apply {
-                        titleId = R.string.dialog_win_title
-                        textId = R.string.dialog_win_text
-                        state.value = true
-                    }
-                }
-                is GuessEvent.WrongGuess -> {
-                    //TODO
-                    snackbarHostState.showSnackbar(
-                        message = "Wrong Guess",
-                        duration = SnackbarDuration.Short,
-                        withDismissAction = true
-                    )
+                    viewModel.onEvent(UIEvent.WonEvent)
                 }
                 is GuessEvent.LastGuess -> {
                     //snackbarHostState.showSnackbar(message = "Last Guess")
-                    dialogParams.apply {
-                        titleId = R.string.dialog_lost_title
-                        textId = R.string.dialog_lost_text
-                        state.value = true
-                    }
+                    viewModel.onEvent(UIEvent.LostEvent)
                 }
             }
         }
@@ -105,7 +80,6 @@ fun HomeScreen() {
         eraseKeyClick = eraseKeyClick,
         submitKeyClick = submitKeyClick,
         snackbarHostState = snackbarHostState,
-        dialogParams = dialogParams
     )
 }
 
@@ -117,7 +91,6 @@ private fun HomeScreenLayout(
     eraseKeyClick: KeyClick,
     submitKeyClick: KeyClick,
     snackbarHostState: SnackbarHostState,
-    dialogParams: DialogParams,
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -137,12 +110,12 @@ private fun HomeScreenLayout(
             )
         },
         content = { padding ->
-            if (dialogParams.state.value) {
-                ShowDialog(dialogParams)
+            if (uiState.dialogParams.isOpened) {
+                ShowDialog(uiState.dialogParams)
             }
             HomeContent(
                 paddingValues = padding,
-                uiState = uiState,
+                game = uiState.game,
                 defaultKeyClick = defaultKeyClick,
                 eraseKeyClick = eraseKeyClick,
                 submitKeyClick = submitKeyClick
@@ -165,12 +138,9 @@ private fun ShowDialog(dialogParams: DialogParams) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    dialogParams.state.value = false
                     dialogParams.confirmAction()
                 }
             ) {
-                // in this line we are adding
-                // text for our confirm button.
                 Text(stringResource(id = R.string.new_game))
             }
         },
@@ -181,7 +151,7 @@ private fun ShowDialog(dialogParams: DialogParams) {
 fun HomeContent(
     modifier: Modifier = Modifier,
     paddingValues: PaddingValues,
-    uiState: UIState,
+    game: Game,
     defaultKeyClick: KeyClick,
     eraseKeyClick: KeyClick,
     submitKeyClick: KeyClick
@@ -201,11 +171,11 @@ fun HomeContent(
                 .padding(16.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            repeat(uiState.attempts) {
-                val word = uiState.history.getOrNull(it) ?: uiState.word
+            repeat(game.attempts) {
+                val word = game.history.getOrNull(it) ?: game.word
                 LettersRow(
                     word = word,
-                    count = uiState.lettersCount,
+                    count = game.lettersCount,
                 )
             }
         }

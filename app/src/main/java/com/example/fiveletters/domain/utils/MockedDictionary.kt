@@ -1,4 +1,4 @@
-package com.example.fiveletters.home.utils
+package com.example.fiveletters.domain.utils
 
 val mockedDictionary = listOf(
     "adult",
