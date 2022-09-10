@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
 
     id 'org.jetbrains.kotlin.plugin.serialization'
@@ -66,7 +67,7 @@ dependencies {
 
     def hilt = "2.38.1"
     implementation "com.google.dagger:hilt-android:${hilt}"
-    annotationProcessor "com.google.dagger:hilt-compiler:${hilt}"
+    kapt "com.google.dagger:hilt-compiler:${hilt}"
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 
     implementation 'androidx.core:core-ktx:1.8.0'
