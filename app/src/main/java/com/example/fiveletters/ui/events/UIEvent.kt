@@ -7,4 +7,5 @@ sealed class UIEvent {
     object NewGameStartedEvent : UIEvent()
     object OpenSettingsEvent : UIEvent()
     object HelpEvent : UIEvent()
+    object ConfirmNewGame : UIEvent()
 }

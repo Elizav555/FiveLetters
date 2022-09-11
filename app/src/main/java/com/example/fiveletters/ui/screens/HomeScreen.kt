@@ -62,7 +62,7 @@ fun HomeScreen() {
     val icons = listOf(
         AppBarIcon(
             icon = Icons.Outlined.Refresh,
-            onClick = { viewModel.onEvent(UIEvent.NewGameStartedEvent) },
+            onClick = { viewModel.onEvent(UIEvent.ConfirmNewGame) },
             desc = stringResource(id = R.string.new_game)
         ),
         AppBarIcon(
@@ -116,7 +116,7 @@ private fun HomeScreenLayout(
         },
         content = { padding ->
             if (uiState.dialogParams.isOpened) {
-                DialogByParams(uiState.dialogParams)
+                DialogByParams(uiState)
             }
             HomeContent(
                 modifier = Modifier.padding(padding),

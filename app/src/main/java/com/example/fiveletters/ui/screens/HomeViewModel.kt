@@ -62,6 +62,9 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             UIEvent.OpenSettingsEvent -> {
                 onSettings()
             }
+            UIEvent.ConfirmNewGame -> {
+                onConfirmNewGame()
+            }
         }
     }
 
@@ -130,6 +133,22 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                     dialogType = DialogType.TextDialog(
                         titleId = R.string.dialog_win_title,
                         textId = R.string.dialog_win_text,
+                        confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
+                        confirmBtnTextId = R.string.new_game
+                    ),
+                    isOpened = true
+                )
+            )
+        }
+    }
+
+    private fun onConfirmNewGame() {
+        _uiState.update {
+            it.copy(
+                dialogParams = it.dialogParams.copy(
+                    dialogType = DialogType.TextDialog(
+                        titleId = R.string.dialog_confirm_title,
+                        textId = R.string.dialog_confirm_text,
                         confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
                         confirmBtnTextId = R.string.new_game
                     ),
