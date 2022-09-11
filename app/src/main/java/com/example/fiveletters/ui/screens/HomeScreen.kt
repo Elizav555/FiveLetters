@@ -2,14 +2,12 @@ package com.example.fiveletters.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.SnackbarHost
@@ -24,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fiveletters.R
@@ -78,13 +77,10 @@ private fun HomeScreenLayout(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             SmallTopAppBar(
-                colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                ),
                 title = {
                     Text(
                         stringResource(id = R.string.app_name),
-                        color = MaterialTheme.colorScheme.onPrimary
+                        textAlign = TextAlign.Center
                     )
                 },
                 scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -95,7 +91,7 @@ private fun HomeScreenLayout(
                 ShowDialog(uiState.dialogParams)
             }
             HomeContent(
-                paddingValues = padding,
+                modifier = Modifier.padding(padding),
                 game = uiState.game,
                 defaultKeyClick = defaultKeyClick,
                 eraseKeyClick = eraseKeyClick,
@@ -131,7 +127,6 @@ private fun ShowDialog(dialogParams: DialogParams) {
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
-    paddingValues: PaddingValues,
     game: Game,
     defaultKeyClick: KeyClick,
     eraseKeyClick: KeyClick,
@@ -140,7 +135,6 @@ fun HomeContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(paddingValues)
             .padding(all = 8.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally

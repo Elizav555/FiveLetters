@@ -12,6 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,16 +25,19 @@ import com.example.fiveletters.domain.utils.myKeyboardKeys
 fun KeyBox(modifier: Modifier = Modifier, key: Key) {
     Text(
         modifier = modifier
+            .clip(shape = MaterialTheme.shapes.small)
+            .shadow(elevation = 2.dp)
             .clickable(onClick = { key.keyClick(key.symbol) })
             .border(
-                width = 3.dp,
+                width = 1.dp,
                 shape = MaterialTheme.shapes.small,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.outline
             )
             .padding(10.dp),
         text = key.symbol,
         textAlign = TextAlign.Center,
         fontSize = 22.sp,
+        color = MaterialTheme.colorScheme.primary
     )
 }
 
