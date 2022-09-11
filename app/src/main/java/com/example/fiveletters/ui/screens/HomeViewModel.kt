@@ -7,8 +7,10 @@ import com.example.fiveletters.domain.model.Game
 import com.example.fiveletters.domain.model.Letter
 import com.example.fiveletters.domain.model.LetterState
 import com.example.fiveletters.domain.model.Word
+import com.example.fiveletters.domain.utils.mockedDictionary
 import com.example.fiveletters.ui.events.UIEvent
 import com.example.fiveletters.ui.state.DialogParams
+import com.example.fiveletters.ui.state.DialogType
 import com.example.fiveletters.ui.state.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -22,12 +24,23 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     private val _uiState: MutableStateFlow<UIState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<UIState> = _uiState
 
-    private fun getInitialUIState() = UIState(
-        game = Game(),
-        dialogParams = DialogParams(
-            confirmAction = { onEvent(UIEvent.NewGameStartedEvent) }
+    private fun getInitialUIState(): UIState {
+        val defaultLettersCount = 5 //TODO maybe getFromCache
+        return UIState(
+            game = Game(
+                lettersCount = defaultLettersCount,
+                hiddenWord = getNewHiddenWord(defaultLettersCount)
+            ),
+            dialogParams = DialogParams(
+                dialogType = DialogType.TextDialog(
+                    confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
+                    confirmBtnTextId = R.string.close_dialog,
+                    textId = R.string.app_name
+                ),
+                closeDialogAction = { closeDialog() }
+            ),
         )
-    )
+    }
 
     fun onEvent(event: UIEvent) {
         when (event) {
@@ -42,6 +55,12 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             }
             is UIEvent.NewGameStartedEvent -> {
                 onNewGame()
+            }
+            UIEvent.HelpEvent -> {
+                onHelp()
+            }
+            UIEvent.OpenSettingsEvent -> {
+                onSettings()
             }
         }
     }
@@ -108,8 +127,12 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         _uiState.update {
             it.copy(
                 dialogParams = it.dialogParams.copy(
-                    titleId = R.string.dialog_win_title,
-                    textId = R.string.dialog_win_text,
+                    dialogType = DialogType.TextDialog(
+                        titleId = R.string.dialog_win_title,
+                        textId = R.string.dialog_win_text,
+                        confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
+                        confirmBtnTextId = R.string.new_game
+                    ),
                     isOpened = true
                 )
             )
@@ -120,11 +143,73 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         _uiState.update {
             it.copy(
                 dialogParams = it.dialogParams.copy(
-                    titleId = R.string.dialog_lost_title,
-                    textId = R.string.dialog_lost_text,
+                    dialogType = DialogType.TextDialog(
+                        titleId = R.string.dialog_lost_title,
+                        textId = R.string.dialog_lost_text,
+                        confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
+                        confirmBtnTextId = R.string.new_game
+                    ),
                     isOpened = true
                 )
             )
         }
+    }
+
+    private fun onHelp() {
+        _uiState.update {
+            it.copy(
+                dialogParams = it.dialogParams.copy(
+                    dialogType = DialogType.HelpDialog(
+                        titleId = R.string.dialog_help_title,
+                        confirmAction = { closeDialog() },
+                        confirmBtnTextId = R.string.got_it
+                    ),
+                    isOpened = true,
+                )
+            )
+        }
+    }
+
+    private fun onSettings() {
+        _uiState.update {
+            it.copy(
+                dialogParams = it.dialogParams.copy(
+                    dialogType = DialogType.SettingsDialog(
+                        titleId = R.string.dialog_settings_title,
+                        confirmAction = { lettersCount: Int, isDarkTheme: Boolean ->
+                            applySettings(
+                                lettersCount,
+                                isDarkTheme
+                            )
+                        },
+                        confirmBtnTextId = R.string.apply
+                    ),
+                    isOpened = true,
+                )
+            )
+        }
+    }
+
+    private fun closeDialog() = _uiState.update {
+        it.copy(
+            dialogParams = it.dialogParams.copy(
+                isOpened = false
+            )
+        )
+    }
+
+    private fun applySettings(lettersCount: Int, isDarkTheme: Boolean) = _uiState.update {
+        it.copy(
+            game = Game(lettersCount = lettersCount, hiddenWord = getNewHiddenWord(lettersCount)),
+            dialogParams = it.dialogParams.copy(
+                isOpened = false
+            ),
+            isDarkTheme = isDarkTheme
+        )
+    }
+
+    private fun getNewHiddenWord(lettersCount: Int): String {
+        //TODO
+        return mockedDictionary.random()
     }
 }

@@ -5,4 +5,12 @@
     <string name="dialog_win_text">Let\'s start new game</string>
     <string name="dialog_lost_title">Oops! You lost</string>
     <string name="dialog_lost_text">Let\'s try again in new game</string>
+    <string name="dialog_help_title">Helpful Info</string>
+    <string name="dialog_settings_title">Settings</string>
+    <string name="close_dialog">Close</string>
+    <string name="got_it">Got it</string>
+    <string name="apply">Apply</string>
+    <string name="help_correct">"This color indicates that this letter is guessed <b>correctly</b>"</string>
+    <string name="help_wrong_position">"This color indicates that this letter <b>is</b> in this word, but at <b>different position</b>"</string>
+    <string name="help_wrong">"This color indicates that this letter <b>is not</b> in this word"</string>
 </resources>

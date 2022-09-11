@@ -6,14 +6,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fiveletters.R
@@ -30,8 +34,9 @@ import com.example.fiveletters.domain.model.Game
 import com.example.fiveletters.domain.model.KeyClick
 import com.example.fiveletters.domain.utils.myKeyboardKeys
 import com.example.fiveletters.ui.events.UIEvent
-import com.example.fiveletters.ui.state.DialogParams
+import com.example.fiveletters.ui.state.AppBarIcon
 import com.example.fiveletters.ui.state.UIState
+import com.example.fiveletters.ui.widgets.DialogByParams
 import com.example.fiveletters.ui.widgets.Keyboard
 import com.example.fiveletters.ui.widgets.LettersRow
 
@@ -54,8 +59,27 @@ fun HomeScreen() {
         viewModel.onEvent(UIEvent.SubmitEvent)
     }
 
+    val icons = listOf(
+        AppBarIcon(
+            icon = Icons.Outlined.Refresh,
+            onClick = { viewModel.onEvent(UIEvent.NewGameStartedEvent) },
+            desc = stringResource(id = R.string.new_game)
+        ),
+        AppBarIcon(
+            icon = Icons.Outlined.Settings,
+            onClick = { viewModel.onEvent(UIEvent.OpenSettingsEvent) },
+            desc = stringResource(id = R.string.dialog_settings_title)
+        ),
+        AppBarIcon(
+            icon = Icons.Outlined.Info,
+            onClick = { viewModel.onEvent(UIEvent.HelpEvent) },
+            desc = stringResource(id = R.string.dialog_help_title)
+        ),
+    )
+
     HomeScreenLayout(
         uiState = uiState,
+        icons = icons,
         defaultKeyClick = defaultKeyClick,
         eraseKeyClick = eraseKeyClick,
         submitKeyClick = submitKeyClick,
@@ -67,6 +91,7 @@ fun HomeScreen() {
 @Composable
 private fun HomeScreenLayout(
     uiState: UIState,
+    icons: List<AppBarIcon>,
     defaultKeyClick: KeyClick,
     eraseKeyClick: KeyClick,
     submitKeyClick: KeyClick,
@@ -80,15 +105,18 @@ private fun HomeScreenLayout(
                 title = {
                     Text(
                         stringResource(id = R.string.app_name),
-                        textAlign = TextAlign.Center
                     )
                 },
+                colors = TopAppBarDefaults
+                    .smallTopAppBarColors
+                        (containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                actions = { AppBarActions(icons) },
                 scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
             )
         },
         content = { padding ->
             if (uiState.dialogParams.isOpened) {
-                ShowDialog(uiState.dialogParams)
+                DialogByParams(uiState.dialogParams)
             }
             HomeContent(
                 modifier = Modifier.padding(padding),
@@ -101,28 +129,18 @@ private fun HomeScreenLayout(
     )
 }
 
-
 @Composable
-private fun ShowDialog(dialogParams: DialogParams) {
-    AlertDialog(
-        onDismissRequest = {},
-        title = {
-            Text(text = dialogParams.titleId?.let { return@let stringResource(id = it) } ?: "")
-        },
-        text = {
-            Text(text = dialogParams.textId?.let { return@let stringResource(id = it) } ?: "")
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    dialogParams.confirmAction()
-                }
-            ) {
-                Text(stringResource(id = R.string.new_game))
-            }
-        },
-    )
+private fun AppBarActions(icons: List<AppBarIcon>) {
+    icons.forEach {
+        IconButton(onClick = it.onClick) {
+            Icon(
+                imageVector = it.icon,
+                contentDescription = it.desc
+            )
+        }
+    }
 }
+
 
 @Composable
 fun HomeContent(
