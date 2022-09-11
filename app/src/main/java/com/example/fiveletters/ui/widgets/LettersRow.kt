@@ -1,5 +1,10 @@
 package com.example.fiveletters.ui.widgets
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,9 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,12 +31,29 @@ import com.example.fiveletters.domain.model.Word
 import com.example.fiveletters.ui.theme.FiveLettersTheme
 
 @Composable
-fun LetterBox(modifier: Modifier = Modifier, letter: Letter) {
+fun LetterBox(modifier: Modifier = Modifier, letter: Letter, index: Int) {
+    val rotation by animateFloatAsState(
+        targetValue = if (letter.state == LetterState.DEFAULT) 0f else 360f,
+        animationSpec = tween(
+            delayMillis = 100 * index,
+            durationMillis = 1500,
+            easing = LinearEasing
+        ),
+    )
+    val animatedColor = animateColorAsState(
+        targetValue = colorByState(letter.state),
+        animationSpec = tween(
+            delayMillis = 100 * index,
+            durationMillis = 1200,
+            easing = LinearOutSlowInEasing
+        )
+    )
     Box(
         modifier = modifier
+            .graphicsLayer { rotationY = rotation }
             .padding(horizontal = 4.dp)
             .border(BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary))
-            .background(colorByState(letter.state))
+            .background(animatedColor.value)
             .padding(all = 8.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -62,7 +86,8 @@ fun LettersRow(
             val letter = word.letters.elementAtOrNull(it)
             LetterBox(
                 modifier = Modifier.weight(1f, fill = true),
-                letter = letter ?: Letter(" ")
+                letter = letter ?: Letter(" "),
+                index = it,
             )
         }
     }
