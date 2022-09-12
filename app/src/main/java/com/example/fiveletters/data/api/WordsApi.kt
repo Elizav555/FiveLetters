@@ -6,9 +6,8 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface WordsApi {
-    @GET("/words.json/randomWord?")
+    @GET("/word?")
     suspend fun getRandomWord(
-        @Query("minLength") minLength: Int,
-        @Query("maxLength") maxLength: Int
+        @Query("length") length: Int,
     ): Response<Word>
 }

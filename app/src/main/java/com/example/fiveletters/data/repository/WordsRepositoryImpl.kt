@@ -11,9 +11,9 @@ class WordsRepositoryImpl @Inject constructor(
     private val api: WordsApi,
     @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher,
 ) : WordsRepository {
-    override suspend fun getRandomWord(minLength: Int, maxLength: Int): Result<String> =
+    override suspend fun getRandomWord(length: Int): Result<String> =
         withContext(coroutineDispatcher) {
-            val response = api.getRandomWord(minLength = minLength, maxLength = maxLength)
+            val response = api.getRandomWord(length)
             response.body()?.let { Result.success(it.word) }
                 ?: Result.failure(Error(response.message()))
         }

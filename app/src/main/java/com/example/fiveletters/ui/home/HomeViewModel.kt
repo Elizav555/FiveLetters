@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fiveletters.R
 import com.example.fiveletters.domain.interactors.cache.CacheInteractor
+import com.example.fiveletters.domain.interactors.words.WordsInteractor
 import com.example.fiveletters.domain.model.Game
 import com.example.fiveletters.domain.model.Letter
 import com.example.fiveletters.domain.model.LetterState
@@ -23,7 +24,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val cacheInteractor: CacheInteractor
+    private val cacheInteractor: CacheInteractor,
+    private val wordsInteractor: WordsInteractor
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<UIState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<UIState> = _uiState
@@ -33,11 +35,11 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getInitialUIState(): UIState {
-        val defaultLettersCount = 5 //TODO maybe getFromCache
+        val defaultLettersCount = 5
         return UIState(
             game = Game(
                 lettersCount = defaultLettersCount,
-                hiddenWord = getNewHiddenWord(defaultLettersCount)
+                hiddenWord = mockedDictionary.random()
             ),
             dialogParams = DialogParams(
                 dialogType = DialogType.TextDialog(
@@ -51,9 +53,16 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun initGame() = viewModelScope.launch {
-        cacheInteractor.getFromCache<Game>(GAME_KEY, typeOf<Game>())?.let { game ->
+        val cachedGame: Game? = cacheInteractor.getFromCache(GAME_KEY, typeOf<Game>())
+        if (cachedGame != null) {
             _uiState.update {
-                it.copy(game = game)
+                it.copy(game = cachedGame)
+            }
+        } else {
+            val word = getNewHiddenWord(_uiState.value.game.lettersCount).getOrNull()
+                ?: mockedDictionary.random()
+            _uiState.update {
+                it.copy(game = it.game.copy(hiddenWord = word))
             }
         }
     }
@@ -231,18 +240,20 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    private fun applySettings(lettersCount: Int) = _uiState.update {
-        it.copy(
-            game = Game(lettersCount = lettersCount, hiddenWord = getNewHiddenWord(lettersCount)),
-            dialogParams = it.dialogParams.copy(
-                isOpened = false
-            ),
-        )
+    private fun applySettings(lettersCount: Int) = viewModelScope.launch {
+        val word = getNewHiddenWord(lettersCount).getOrNull() ?: mockedDictionary.random()
+        _uiState.update {
+            it.copy(
+                game = Game(lettersCount = lettersCount, hiddenWord = word),
+                dialogParams = it.dialogParams.copy(
+                    isOpened = false
+                ),
+            )
+        }
     }
 
-    private fun getNewHiddenWord(lettersCount: Int): String {
-        //TODO
-        return mockedDictionary.random()
+    private suspend fun getNewHiddenWord(lettersCount: Int): Result<String> {
+        return wordsInteractor.getRandomWord(lettersCount)
     }
 
     companion object {
