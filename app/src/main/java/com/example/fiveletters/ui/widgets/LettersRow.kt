@@ -31,7 +31,7 @@ import com.example.fiveletters.domain.model.Word
 import com.example.fiveletters.ui.theme.FiveLettersTheme
 
 @Composable
-fun LetterBox(modifier: Modifier = Modifier, letter: Letter, index: Int) {
+fun LetterBox(modifier: Modifier = Modifier, letter: Letter, index: Int, count: Int) {
     val rotation by animateFloatAsState(
         targetValue = if (letter.state == LetterState.DEFAULT) 0f else 360f,
         animationSpec = tween(
@@ -57,7 +57,7 @@ fun LetterBox(modifier: Modifier = Modifier, letter: Letter, index: Int) {
             .padding(all = 8.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = letter.symbol, fontSize = 32.sp)
+        Text(text = letter.symbol, fontSize = if (count == 7) 28.sp else 32.sp)
     }
 }
 
@@ -88,6 +88,7 @@ fun LettersRow(
                 modifier = Modifier.weight(1f, fill = true),
                 letter = letter ?: Letter(" "),
                 index = it,
+                count = count
             )
         }
     }
