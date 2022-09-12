@@ -41,7 +41,7 @@ import com.example.fiveletters.ui.widgets.Keyboard
 import com.example.fiveletters.ui.widgets.LettersRow
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(changeTheme: (isDark: Boolean) -> Unit) {
     val viewModel = hiltViewModel<HomeViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
@@ -84,6 +84,7 @@ fun HomeScreen() {
         eraseKeyClick = eraseKeyClick,
         submitKeyClick = submitKeyClick,
         snackbarHostState = snackbarHostState,
+        changeTheme = changeTheme
     )
 }
 
@@ -96,6 +97,7 @@ private fun HomeScreenLayout(
     eraseKeyClick: KeyClick,
     submitKeyClick: KeyClick,
     snackbarHostState: SnackbarHostState,
+    changeTheme: (isDark: Boolean) -> Unit
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -116,7 +118,7 @@ private fun HomeScreenLayout(
         },
         content = { padding ->
             if (uiState.dialogParams.isOpened) {
-                DialogByParams(uiState)
+                DialogByParams(uiState, changeTheme)
             }
             HomeContent(
                 modifier = Modifier.padding(padding),

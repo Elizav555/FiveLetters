@@ -33,10 +33,10 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             ),
             dialogParams = DialogParams(
                 dialogType = DialogType.TextDialog(
-                    confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
-                    confirmBtnTextId = R.string.close_dialog,
                     textId = R.string.app_name
                 ),
+                confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
+                confirmBtnTextId = R.string.close_dialog,
                 closeDialogAction = { closeDialog() }
             ),
         )
@@ -131,11 +131,11 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             it.copy(
                 dialogParams = it.dialogParams.copy(
                     dialogType = DialogType.TextDialog(
-                        titleId = R.string.dialog_win_title,
                         textId = R.string.dialog_win_text,
-                        confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
-                        confirmBtnTextId = R.string.new_game
                     ),
+                    titleId = R.string.dialog_win_title,
+                    confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
+                    confirmBtnTextId = R.string.new_game,
                     isOpened = true
                 )
             )
@@ -147,11 +147,11 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             it.copy(
                 dialogParams = it.dialogParams.copy(
                     dialogType = DialogType.TextDialog(
-                        titleId = R.string.dialog_confirm_title,
                         textId = R.string.dialog_confirm_text,
-                        confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
-                        confirmBtnTextId = R.string.new_game
                     ),
+                    titleId = R.string.dialog_confirm_title,
+                    confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
+                    confirmBtnTextId = R.string.new_game,
                     isOpened = true
                 )
             )
@@ -163,11 +163,11 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             it.copy(
                 dialogParams = it.dialogParams.copy(
                     dialogType = DialogType.TextDialog(
-                        titleId = R.string.dialog_lost_title,
                         textId = R.string.dialog_lost_text,
-                        confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
-                        confirmBtnTextId = R.string.new_game
                     ),
+                    titleId = R.string.dialog_lost_title,
+                    confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
+                    confirmBtnTextId = R.string.new_game,
                     isOpened = true
                 )
             )
@@ -178,11 +178,10 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         _uiState.update {
             it.copy(
                 dialogParams = it.dialogParams.copy(
-                    dialogType = DialogType.HelpDialog(
-                        titleId = R.string.dialog_help_title,
-                        confirmAction = { closeDialog() },
-                        confirmBtnTextId = R.string.got_it
-                    ),
+                    dialogType = DialogType.HelpDialog,
+                    titleId = R.string.dialog_help_title,
+                    confirmAction = { closeDialog() },
+                    confirmBtnTextId = R.string.got_it,
                     isOpened = true,
                 )
             )
@@ -193,16 +192,15 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         _uiState.update {
             it.copy(
                 dialogParams = it.dialogParams.copy(
-                    dialogType = DialogType.SettingsDialog(
-                        titleId = R.string.dialog_settings_title,
-                        confirmAction = { lettersCount: Int, isDarkTheme: Boolean ->
+                    dialogType = DialogType.SettingsDialog,
+                    confirmAction = { lettersCount: Any? ->
+                        (lettersCount as? Int)?.let { int ->
                             applySettings(
-                                lettersCount,
-                                isDarkTheme
+                                int,
                             )
-                        },
-                        confirmBtnTextId = R.string.apply
-                    ),
+                        } ?: closeDialog()
+                    },
+                    confirmBtnTextId = R.string.apply,
                     isOpened = true,
                 )
             )
@@ -217,13 +215,12 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         )
     }
 
-    private fun applySettings(lettersCount: Int, isDarkTheme: Boolean) = _uiState.update {
+    private fun applySettings(lettersCount: Int) = _uiState.update {
         it.copy(
             game = Game(lettersCount = lettersCount, hiddenWord = getNewHiddenWord(lettersCount)),
             dialogParams = it.dialogParams.copy(
                 isOpened = false
             ),
-            isDarkTheme = isDarkTheme
         )
     }
 
