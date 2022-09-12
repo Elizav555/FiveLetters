@@ -1,6 +1,8 @@
 package com.example.fiveletters.di
 
+import com.example.fiveletters.data.preferences.PreferencesImpl
 import com.example.fiveletters.data.repository.WordsRepositoryImpl
+import com.example.fiveletters.domain.preferences.Preferences
 import com.example.fiveletters.domain.repository.WordsRepository
 import dagger.Binds
 import dagger.Module
@@ -18,4 +20,10 @@ abstract class RepositoryBindsModule {
     abstract fun bindWordsRepository(
         wordsRepositoryImpl: WordsRepositoryImpl
     ): WordsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPreferences(
+        preferencesImpl: PreferencesImpl
+    ): Preferences
 }

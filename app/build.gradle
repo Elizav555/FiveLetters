@@ -26,6 +26,7 @@ android {
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
         buildConfigField "String", "API_KEY", "\"${properties.getProperty('API_KEY')}\""
+        buildConfigField "String", "SHARED_PREFERENCES_NAME", "\"${properties.getProperty('SHARED_PREFERENCES_NAME')}\""
     }
 
     buildTypes {

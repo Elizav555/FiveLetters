@@ -62,7 +62,7 @@ fun HomeScreen(changeTheme: (isDark: Boolean) -> Unit) {
     val icons = listOf(
         AppBarIcon(
             icon = Icons.Outlined.Refresh,
-            onClick = { viewModel.onEvent(UIEvent.ConfirmNewGame) },
+            onClick = { viewModel.onEvent(UIEvent.ConfirmNewGameEvent) },
             desc = stringResource(id = R.string.new_game)
         ),
         AppBarIcon(

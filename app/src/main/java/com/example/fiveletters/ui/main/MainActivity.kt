@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainActivityContent() {
     val viewModel = hiltViewModel<MainViewModel>()
-    val isDarkModeState by viewModel.isDarkModeState.collectAsState()
+    val isDarkModeState by viewModel.settingsState.collectAsState()
     val changeTheme = { isDark: Boolean -> viewModel.onEvent(MainEvent.ChangeThemeEvent(isDark)) }
     FiveLettersTheme(darkTheme = isDarkModeState.isDarkMode ?: isSystemInDarkTheme()) {
         HomeScreen(changeTheme)
