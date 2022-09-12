@@ -3,12 +3,14 @@ package com.example.fiveletters.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fiveletters.R
+import com.example.fiveletters.di.coroutines.qualifiers.DefaultDispatcher
 import com.example.fiveletters.domain.interactors.preferences.PreferencesInteractor
 import com.example.fiveletters.domain.model.Game
 import com.example.fiveletters.domain.model.Letter
 import com.example.fiveletters.domain.model.LetterState
 import com.example.fiveletters.domain.model.Word
 import com.example.fiveletters.domain.utils.mockedDictionary
+import com.example.fiveletters.domain.utils.myKeyboardKeys
 import com.example.fiveletters.ui.events.UIEvent
 import com.example.fiveletters.ui.state.DialogParams
 import com.example.fiveletters.ui.state.DialogType
@@ -17,6 +19,7 @@ import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.lang.reflect.Type
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -24,7 +27,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val preferencesInteractor: PreferencesInteractor
+    private val preferencesInteractor: PreferencesInteractor,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<UIState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<UIState> = _uiState
@@ -38,7 +42,17 @@ class HomeViewModel @Inject constructor(
         return UIState(
             game = Game(
                 lettersCount = defaultLettersCount,
-                hiddenWord = getNewHiddenWord(defaultLettersCount)
+                hiddenWord = getNewHiddenWord(defaultLettersCount),
+                keyboard = myKeyboardKeys(
+                    defaultKeyClick = { letter: String? ->
+                        letter?.let { onEvent(UIEvent.LetterAddedEvent(it)) }
+                    },
+                    eraseKeyClick = {
+                        onEvent(UIEvent.ErasedEvent)
+                    }
+                ) {
+                    onEvent(UIEvent.SubmitEvent)
+                }
             ),
             dialogParams = DialogParams(
                 dialogType = DialogType.TextDialog(
@@ -53,9 +67,15 @@ class HomeViewModel @Inject constructor(
 
     private fun initGame() = viewModelScope.launch {
         val type: Type = object : TypeToken<Game?>() {}.type
-        preferencesInteractor.getItem<Game>(GAME_KEY, type)?.let { game ->
+        val cachedGame: Game? = preferencesInteractor.getItem<Game>(GAME_KEY, type)
+        if (cachedGame != null) {
             _uiState.update {
-                it.copy(game = game, isInited = true)
+                it.copy(game = cachedGame, isInited = true)
+            }
+        } else {
+            val word = getNewHiddenWord(_uiState.value.game.lettersCount)
+            _uiState.update {
+                it.copy(game = it.game.copy(hiddenWord = word), isInited = true)
             }
         }
     }
@@ -104,18 +124,26 @@ class HomeViewModel @Inject constructor(
         if (word.letters.count() < lettersCount) {
             return@with
         }
-        viewModelScope.launch {
+        viewModelScope.launch(defaultDispatcher) {
             var rightLettersCount = 0
             val newWord = word.letters.toMutableList()
             var newAttempts = attempts
-            repeat(lettersCount) {
-                if (word.letters[it].symbol == hiddenWord[it].uppercase()) {
+            val keyboard = _uiState.value.game.keyboard
+            repeat(lettersCount) { index ->
+                if (word.letters[index].symbol == hiddenWord[index].uppercase()) {
                     rightLettersCount++
-                    newWord[it].state = LetterState.CORRECT
-                } else if (hiddenWord.uppercase().contains(word.letters[it].symbol)) {
-                    newWord[it].state = LetterState.WRONG_POSITION
+                    newWord[index].state = LetterState.CORRECT
+                } else if (hiddenWord.uppercase().contains(word.letters[index].symbol)) {
+                    newWord[index].state = LetterState.WRONG_POSITION
                 } else {
-                    newWord[it].state = LetterState.WRONG
+                    newWord[index].state = LetterState.WRONG
+                    keyboard.rows.forEachIndexed { indexFirst, row ->
+                        row.keys.forEachIndexed { indexSecond, key ->
+                            if (key.symbol == word.letters[index].symbol) {
+                                keyboard.rows[indexFirst].keys[indexSecond].isWrong = true
+                            }
+                        }
+                    }
                 }
             }
             if (rightLettersCount == lettersCount) {
@@ -131,7 +159,8 @@ class HomeViewModel @Inject constructor(
                     game = it.game.copy(
                         word = Word(),
                         attempts = newAttempts,
-                        history = newHistory
+                        history = newHistory,
+                        keyboard = keyboard
                     )
                 )
             }
@@ -146,19 +175,23 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(game = it.game.copy(word = Word(newWord))) }
     }
 
-    private fun onNewGame() = viewModelScope.launch {
-        val word = getNewHiddenWord(_uiState.value.game.lettersCount)
-        _uiState.update {
-            getInitialUIState()
+    private fun onNewGame(lettersCount: Int = _uiState.value.game.lettersCount) =
+        viewModelScope.launch {
+            val word = mockedDictionary.random()
+            _uiState.update {
+                getInitialUIState()
+            }
+            _uiState.update {
+                it.copy(
+                    isInited = true,
+                    game = it.game.copy(
+                        hiddenWord = word,
+                        lettersCount = lettersCount
+                    )
+                )
+            }
+            preferencesInteractor.saveItem(GAME_KEY, _uiState.value.game)
         }
-        _uiState.update {
-            it.copy(
-                isInited = true,
-                game = it.game.copy(hiddenWord = word)
-            )
-        }
-        preferencesInteractor.saveItem(GAME_KEY,_uiState.value.game)
-    }
 
     private fun onWonGame() {
         _uiState.update {
@@ -240,8 +273,8 @@ class HomeViewModel @Inject constructor(
 
     private fun onApplySettingsEvent(lettersCount: Int?) {
         (lettersCount)?.let { int ->
-            if (_uiState.value.game.lettersCount == int) {
-                applySettings(
+            if (_uiState.value.game.lettersCount != int) {
+                onNewGame(
                     int,
                 )
             } else {
@@ -250,20 +283,12 @@ class HomeViewModel @Inject constructor(
         } ?: closeDialog()
     }
 
+
     private fun closeDialog() = _uiState.update {
         it.copy(
             dialogParams = it.dialogParams.copy(
                 isOpened = false
             )
-        )
-    }
-
-    private fun applySettings(lettersCount: Int) = _uiState.update {
-        it.copy(
-            game = Game(lettersCount = lettersCount, hiddenWord = getNewHiddenWord(lettersCount)),
-            dialogParams = it.dialogParams.copy(
-                isOpened = false
-            ),
         )
     }
 

@@ -31,14 +31,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fiveletters.R
-import com.example.fiveletters.domain.model.Game
-import com.example.fiveletters.domain.model.KeyClick
-import com.example.fiveletters.domain.utils.myKeyboardKeys
 import com.example.fiveletters.ui.events.UIEvent
 import com.example.fiveletters.ui.state.AppBarIcon
 import com.example.fiveletters.ui.state.UIState
 import com.example.fiveletters.ui.widgets.DialogByParams
-import com.example.fiveletters.ui.widgets.Keyboard
+import com.example.fiveletters.ui.widgets.KeyboardWidget
 import com.example.fiveletters.ui.widgets.LettersRow
 
 @Composable
@@ -48,16 +45,6 @@ fun HomeScreen(changeTheme: (isDark: Boolean) -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember {
         SnackbarHostState()
-    }
-
-    val defaultKeyClick: KeyClick = { letter: String? ->
-        letter?.let { viewModel.onEvent(UIEvent.LetterAddedEvent(it)) }
-    }
-    val eraseKeyClick: KeyClick = { _ ->
-        viewModel.onEvent(UIEvent.ErasedEvent)
-    }
-    val submitKeyClick: KeyClick = { _ ->
-        viewModel.onEvent(UIEvent.SubmitEvent)
     }
 
     val icons = listOf(
@@ -81,9 +68,6 @@ fun HomeScreen(changeTheme: (isDark: Boolean) -> Unit) {
     HomeScreenLayout(
         uiState = uiState,
         icons = icons,
-        defaultKeyClick = defaultKeyClick,
-        eraseKeyClick = eraseKeyClick,
-        submitKeyClick = submitKeyClick,
         snackbarHostState = snackbarHostState,
         changeTheme = changeTheme
     )
@@ -94,9 +78,6 @@ fun HomeScreen(changeTheme: (isDark: Boolean) -> Unit) {
 private fun HomeScreenLayout(
     uiState: UIState,
     icons: List<AppBarIcon>,
-    defaultKeyClick: KeyClick,
-    eraseKeyClick: KeyClick,
-    submitKeyClick: KeyClick,
     snackbarHostState: SnackbarHostState,
     changeTheme: (isDark: Boolean) -> Unit
 ) {
@@ -124,10 +105,7 @@ private fun HomeScreenLayout(
             if (uiState.isInited) {
                 HomeContent(
                     modifier = Modifier.padding(padding),
-                    game = uiState.game,
-                    defaultKeyClick = defaultKeyClick,
-                    eraseKeyClick = eraseKeyClick,
-                    submitKeyClick = submitKeyClick
+                    uiState = uiState,
                 )
             } else {
                 Loading()
@@ -152,10 +130,7 @@ private fun AppBarActions(icons: List<AppBarIcon>) {
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
-    game: Game,
-    defaultKeyClick: KeyClick,
-    eraseKeyClick: KeyClick,
-    submitKeyClick: KeyClick
+    uiState: UIState
 ) {
     Column(
         modifier = modifier
@@ -171,16 +146,16 @@ fun HomeContent(
                 .padding(16.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            repeat(game.attempts) {
-                val word = game.history.getOrNull(it) ?: game.word
+            repeat(uiState.game.attempts) {
+                val word = uiState.game.history.getOrNull(it) ?: uiState.game.word
                 LettersRow(
                     word = word,
-                    count = game.lettersCount,
+                    count = uiState.game.lettersCount,
                 )
             }
         }
-        Keyboard(
-            keys = myKeyboardKeys(defaultKeyClick, eraseKeyClick, submitKeyClick)
+        KeyboardWidget(
+            keyboard = uiState.game.keyboard
         )
     }
 }
