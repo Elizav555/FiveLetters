@@ -155,8 +155,18 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(game = it.game.copy(word = Word(newWord))) }
     }
 
-    private fun onNewGame() {
-        _uiState.update { getInitialUIState() }
+    private fun onNewGame() = viewModelScope.launch {
+        val word = getNewHiddenWord(_uiState.value.game.lettersCount)
+        _uiState.update {
+            getInitialUIState()
+        }
+        _uiState.update {
+            it.copy(
+                isInited = true,
+                game = it.game.copy(hiddenWord = word)
+            )
+        }
+        preferencesInteractor.saveItem(GAME_KEY,_uiState.value.game)
     }
 
     private fun onWonGame() {
@@ -197,6 +207,7 @@ class HomeViewModel @Inject constructor(
                 dialogParams = it.dialogParams.copy(
                     dialogType = DialogType.TextDialog(
                         textId = R.string.dialog_lost_text,
+                        textParams = listOf(_uiState.value.game.hiddenWord)
                     ),
                     titleId = R.string.dialog_lost_title,
                     confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
