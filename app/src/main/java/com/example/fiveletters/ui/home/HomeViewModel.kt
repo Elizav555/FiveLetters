@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val preferencesInteractor: PreferencesInteractor,
-   private val wordsInteractor: WordsInteractor
+    private val wordsInteractor: WordsInteractor
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<UIState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<UIState> = _uiState
@@ -155,19 +155,23 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(game = it.game.copy(word = Word(newWord))) }
     }
 
-    private fun onNewGame() = viewModelScope.launch {
-        val word = getNewHiddenWord(_uiState.value.game.lettersCount).getOrNull() ?: mockedDictionary.random()
-        _uiState.update {
-            getInitialUIState()
+    private fun onNewGame(lettersCount: Int = _uiState.value.game.lettersCount) =
+        viewModelScope.launch {
+            val word = getNewHiddenWord(lettersCount).getOrNull() ?: mockedDictionary.random()
+            _uiState.update {
+                getInitialUIState()
+            }
+            _uiState.update {
+                it.copy(
+                    isInited = true,
+                    game = it.game.copy(
+                        hiddenWord = word,
+                        lettersCount = lettersCount
+                    )
+                )
+            }
+            preferencesInteractor.saveItem(GAME_KEY, _uiState.value.game)
         }
-        _uiState.update {
-            it.copy(
-                isInited = true,
-                game = it.game.copy(hiddenWord = word)
-            )
-        }
-        preferencesInteractor.saveItem(GAME_KEY,_uiState.value.game)
-    }
 
     private fun onWonGame() {
         _uiState.update {
@@ -249,8 +253,8 @@ class HomeViewModel @Inject constructor(
 
     private fun onApplySettingsEvent(lettersCount: Int?) {
         (lettersCount)?.let { int ->
-            if (_uiState.value.game.lettersCount == int) {
-                applySettings(
+            if (_uiState.value.game.lettersCount != int) {
+                onNewGame(
                     int,
                 )
             } else {
@@ -265,18 +269,6 @@ class HomeViewModel @Inject constructor(
                 isOpened = false
             )
         )
-    }
-
-    private fun applySettings(lettersCount: Int) = viewModelScope.launch {
-        val word = getNewHiddenWord(lettersCount).getOrNull() ?: mockedDictionary.random()
-        _uiState.update {
-            it.copy(
-                game = Game(lettersCount = lettersCount, hiddenWord = word),
-                dialogParams = it.dialogParams.copy(
-                    isOpened = false
-                ),
-            )
-        }
     }
 
     private suspend fun getNewHiddenWord(lettersCount: Int): Result<String> {
