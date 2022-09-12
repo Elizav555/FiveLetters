@@ -4,7 +4,7 @@
     <string name="dialog_win_title">Congrats! You won</string>
     <string name="dialog_win_text">Let\'s start new game</string>
     <string name="dialog_lost_title">Oops! You lost</string>
-    <string name="dialog_lost_text">Let\'s try again in new game</string>
+    <string name="dialog_lost_text">Let\'s try again in new game.\nHidden word was <b>%1$s</b></string>
     <string name="dialog_help_title">Helpful Info</string>
     <string name="dialog_settings_title">Settings</string>
     <string name="close_dialog">Close</string>

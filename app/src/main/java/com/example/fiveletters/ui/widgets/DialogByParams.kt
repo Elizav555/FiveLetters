@@ -204,5 +204,5 @@ private fun SettingsDialogContent(
 
 @Composable
 private fun TextDialogContent(dialog: DialogType.TextDialog) {
-    Text(text = stringResource(id = dialog.textId))
+    Text(text = stringResource(id = dialog.textId, *dialog.textParams.toTypedArray()))
 }
