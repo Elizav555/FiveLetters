@@ -156,7 +156,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun onNewGame() = viewModelScope.launch {
-        val word = getNewHiddenWord(_uiState.value.game.lettersCount)
+        val word = getNewHiddenWord(_uiState.value.game.lettersCount).getOrNull() ?: mockedDictionary.random()
         _uiState.update {
             getInitialUIState()
         }
