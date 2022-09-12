@@ -64,7 +64,7 @@ class HomeViewModel @Inject constructor(
             val word = getNewHiddenWord(_uiState.value.game.lettersCount).getOrNull()
                 ?: mockedDictionary.random()
             _uiState.update {
-                it.copy(game = it.game.copy(hiddenWord = word))
+                it.copy(game = it.game.copy(hiddenWord = word), isInited = true)
             }
         }
     }
