@@ -1,4 +1,4 @@
-package com.example.fiveletters.ui.screens
+package com.example.fiveletters.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

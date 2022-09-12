@@ -1,8 +1,9 @@
-package com.example.fiveletters.ui.screens
+package com.example.fiveletters.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fiveletters.R
+import com.example.fiveletters.domain.interactors.cache.CacheInteractor
 import com.example.fiveletters.domain.model.Game
 import com.example.fiveletters.domain.model.Letter
 import com.example.fiveletters.domain.model.LetterState
@@ -14,15 +15,22 @@ import com.example.fiveletters.ui.state.DialogType
 import com.example.fiveletters.ui.state.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.reflect.typeOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val cacheInteractor: CacheInteractor
+) : ViewModel() {
     private val _uiState: MutableStateFlow<UIState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<UIState> = _uiState
+
+    init {
+        initGame()
+    }
 
     private fun getInitialUIState(): UIState {
         val defaultLettersCount = 5 //TODO maybe getFromCache
@@ -40,6 +48,14 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                 closeDialogAction = { closeDialog() }
             ),
         )
+    }
+
+    private fun initGame() = viewModelScope.launch {
+        cacheInteractor.getFromCache<Game>(GAME_KEY, typeOf<Game>())?.let { game ->
+            _uiState.update {
+                it.copy(game = game)
+            }
+        }
     }
 
     fun onEvent(event: UIEvent) {
@@ -227,5 +243,9 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     private fun getNewHiddenWord(lettersCount: Int): String {
         //TODO
         return mockedDictionary.random()
+    }
+
+    companion object {
+        const val GAME_KEY = "game_key"
     }
 }

@@ -9,7 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fiveletters.ui.events.MainEvent
-import com.example.fiveletters.ui.screens.HomeScreen
+import com.example.fiveletters.ui.home.HomeScreen
 import com.example.fiveletters.ui.theme.FiveLettersTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,7 +29,7 @@ fun MainActivityContent() {
     val viewModel = hiltViewModel<MainViewModel>()
     val isDarkModeState by viewModel.isDarkModeState.collectAsState()
     val changeTheme = { isDark: Boolean -> viewModel.onEvent(MainEvent.ChangeThemeEvent(isDark)) }
-    FiveLettersTheme(darkTheme = isDarkModeState ?: isSystemInDarkTheme()) {
+    FiveLettersTheme(darkTheme = isDarkModeState.isDarkMode ?: isSystemInDarkTheme()) {
         HomeScreen(changeTheme)
     }
 }

@@ -1,7 +1,7 @@
 package com.example.fiveletters.di
 
-import com.example.fiveletters.domain.interactors.WordsInteractor
-import com.example.fiveletters.domain.interactors.WordsInteractorImpl
+import com.example.fiveletters.domain.interactors.words.WordsInteractor
+import com.example.fiveletters.domain.interactors.words.WordsInteractorImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

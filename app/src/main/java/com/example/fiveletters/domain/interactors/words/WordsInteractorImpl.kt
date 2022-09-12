@@ -1,4 +1,4 @@
-package com.example.fiveletters.domain.interactors
+package com.example.fiveletters.domain.interactors.words
 
 import com.example.fiveletters.domain.repository.WordsRepository
 import javax.inject.Inject
