@@ -3,7 +3,7 @@ package com.example.fiveletters.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fiveletters.R
-import com.example.fiveletters.domain.interactors.cache.CacheInteractor
+import com.example.fiveletters.domain.interactors.preferences.PreferencesInteractor
 import com.example.fiveletters.domain.interactors.words.WordsInteractor
 import com.example.fiveletters.domain.model.Game
 import com.example.fiveletters.domain.model.Letter
@@ -14,9 +14,10 @@ import com.example.fiveletters.ui.events.UIEvent
 import com.example.fiveletters.ui.state.DialogParams
 import com.example.fiveletters.ui.state.DialogType
 import com.example.fiveletters.ui.state.UIState
+import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.lang.reflect.Type
 import javax.inject.Inject
-import kotlin.reflect.typeOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -24,8 +25,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val cacheInteractor: CacheInteractor,
-    private val wordsInteractor: WordsInteractor
+    private val preferencesInteractor: PreferencesInteractor,
+   private val wordsInteractor: WordsInteractor
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<UIState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<UIState> = _uiState
@@ -53,10 +54,11 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun initGame() = viewModelScope.launch {
-        val cachedGame: Game? = cacheInteractor.getFromCache(GAME_KEY, typeOf<Game>())
+        val type: Type = object : TypeToken<Game?>() {}.type
+        val cachedGame: Game? = preferencesInteractor.getItem<Game>(GAME_KEY, type)
         if (cachedGame != null) {
             _uiState.update {
-                it.copy(game = cachedGame)
+                it.copy(game = cachedGame, isInited = true)
             }
         } else {
             val word = getNewHiddenWord(_uiState.value.game.lettersCount).getOrNull()
@@ -81,15 +83,21 @@ class HomeViewModel @Inject constructor(
             is UIEvent.NewGameStartedEvent -> {
                 onNewGame()
             }
-            UIEvent.HelpEvent -> {
+            is UIEvent.HelpEvent -> {
                 onHelp()
             }
-            UIEvent.OpenSettingsEvent -> {
+            is UIEvent.OpenSettingsEvent -> {
                 onSettings()
             }
-            UIEvent.ConfirmNewGame -> {
+            is UIEvent.ConfirmNewGameEvent -> {
                 onConfirmNewGame()
             }
+            is UIEvent.ApplySettingEvent -> {
+                onApplySettingsEvent(event.lettersCount)
+            }
+        }
+        viewModelScope.launch {
+            preferencesInteractor.saveItem(GAME_KEY, _uiState.value.game)
         }
     }
 
@@ -219,17 +227,25 @@ class HomeViewModel @Inject constructor(
                 dialogParams = it.dialogParams.copy(
                     dialogType = DialogType.SettingsDialog,
                     confirmAction = { lettersCount: Any? ->
-                        (lettersCount as? Int)?.let { int ->
-                            applySettings(
-                                int,
-                            )
-                        } ?: closeDialog()
+                        onEvent(UIEvent.ApplySettingEvent(lettersCount as? Int))
                     },
                     confirmBtnTextId = R.string.apply,
                     isOpened = true,
                 )
             )
         }
+    }
+
+    private fun onApplySettingsEvent(lettersCount: Int?) {
+        (lettersCount)?.let { int ->
+            if (_uiState.value.game.lettersCount == int) {
+                applySettings(
+                    int,
+                )
+            } else {
+                closeDialog()
+            }
+        } ?: closeDialog()
     }
 
     private fun closeDialog() = _uiState.update {

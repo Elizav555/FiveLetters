@@ -7,5 +7,6 @@ sealed class UIEvent {
     object NewGameStartedEvent : UIEvent()
     object OpenSettingsEvent : UIEvent()
     object HelpEvent : UIEvent()
-    object ConfirmNewGame : UIEvent()
+    object ConfirmNewGameEvent : UIEvent()
+    data class ApplySettingEvent(val lettersCount: Int?) : UIEvent()
 }
