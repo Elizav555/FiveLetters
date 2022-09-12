@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -120,13 +121,17 @@ private fun HomeScreenLayout(
             if (uiState.dialogParams.isOpened) {
                 DialogByParams(uiState, changeTheme)
             }
-            HomeContent(
-                modifier = Modifier.padding(padding),
-                game = uiState.game,
-                defaultKeyClick = defaultKeyClick,
-                eraseKeyClick = eraseKeyClick,
-                submitKeyClick = submitKeyClick
-            )
+            if (uiState.isInited) {
+                HomeContent(
+                    modifier = Modifier.padding(padding),
+                    game = uiState.game,
+                    defaultKeyClick = defaultKeyClick,
+                    eraseKeyClick = eraseKeyClick,
+                    submitKeyClick = submitKeyClick
+                )
+            } else {
+                Loading()
+            }
         }
     )
 }
@@ -180,3 +185,13 @@ fun HomeContent(
     }
 }
 
+@Composable
+private fun Loading() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator()
+    }
+}

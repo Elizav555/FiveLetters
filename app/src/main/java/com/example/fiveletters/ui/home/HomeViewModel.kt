@@ -34,7 +34,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getInitialUIState(): UIState {
-        val defaultLettersCount = 5 //TODO maybe getFromCache
+        val defaultLettersCount = 5
         return UIState(
             game = Game(
                 lettersCount = defaultLettersCount,
@@ -55,7 +55,7 @@ class HomeViewModel @Inject constructor(
         val type: Type = object : TypeToken<Game?>() {}.type
         preferencesInteractor.getItem<Game>(GAME_KEY, type)?.let { game ->
             _uiState.update {
-                it.copy(game = game)
+                it.copy(game = game, isInited = true)
             }
         }
     }
