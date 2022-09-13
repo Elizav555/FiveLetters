@@ -7,7 +7,8 @@ import java.util.Locale
 
 internal val defaultLocalization: Localization = Localization(Locale.ENGLISH)
 
-private val supportedLocales: MutableSet<Locale> = mutableSetOf()
+private val _supportedLocales: MutableSet<Locale> = mutableSetOf()
+internal val supportedLocales: Set<Locale> get()= _supportedLocales + Locale.ENGLISH
 
 internal val localizationMap = hashMapOf<Locale, Localization>()
 
@@ -19,11 +20,11 @@ data class Localization(
 fun registerSupportedLocales(vararg locales: Locale): Set<Locale> {
     locales.filter { it != Locale.ENGLISH }
         .forEach {
-            if (supportedLocales.add(it)) {
+            if (_supportedLocales.add(it)) {
                 registerLocalizationForLocale(it)
             }
         }
-    return supportedLocales + Locale.ENGLISH
+    return _supportedLocales + Locale.ENGLISH
 }
 
 private fun registerLocalizationForLocale(locale: Locale) {

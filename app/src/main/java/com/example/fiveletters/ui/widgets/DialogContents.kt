@@ -1,5 +1,6 @@
 package com.example.fiveletters.ui.widgets
 
+import LocalLocalization
 import Vocabulary.localization
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,14 +33,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.example.fiveletters.domain.model.LettersCount
-import com.example.fiveletters.domain.model.lettersCountFromInt
 import com.example.fiveletters.ui.res.theme.FiveLettersTheme
 import com.example.fiveletters.ui.res.values.chooseLettersCount
+import com.example.fiveletters.ui.res.values.chooseLocale
 import com.example.fiveletters.ui.res.values.helpCorrect
 import com.example.fiveletters.ui.res.values.helpText
 import com.example.fiveletters.ui.res.values.helpWrong
 import com.example.fiveletters.ui.res.values.helpWrongPosition
 import com.example.fiveletters.ui.res.values.isDarkMode
+import java.util.Locale
+import supportedLocales
 
 
 @Composable
@@ -82,14 +85,17 @@ fun HelpDialogContent() {
 
 @Composable
 fun SettingsDialogContent(
-    newLettersCountState: MutableState<LettersCount>,
-    changeTheme: (isDark: Boolean) -> Unit
+    lettersCountState: MutableState<LettersCount>,
+    changeTheme: (isDark: Boolean) -> Unit,
+    currentLocale: MutableState<Locale>
 ) {
     val isDarkInitial = isSystemInDarkTheme()
     val isDarkTheme = remember {
         mutableStateOf(isDarkInitial)
     }
+
     Column(verticalArrangement = Arrangement.SpaceBetween) {
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -114,31 +120,66 @@ fun SettingsDialogContent(
                 }
             )
         }
+
         Text(
             text = localization.chooseLettersCount(),
             style = MaterialTheme.typography.titleLarge
         )
-        val radioOptions = listOf(5, 6, 7)
+
+        val countOptions = LettersCount.values()
         Column(Modifier.selectableGroup()) {
-            radioOptions.forEach { text ->
+            countOptions.forEach { lettersCount ->
                 Row(
                     Modifier
                         .fillMaxWidth()
                         .height(56.dp)
                         .selectable(
-                            selected = (text == newLettersCountState.value.count),
-                            onClick = { newLettersCountState.value = lettersCountFromInt(text) },
+                            selected = (lettersCount == lettersCountState.value),
+                            onClick = { lettersCountState.value = lettersCount },
                             role = Role.RadioButton
                         )
                         .padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
-                        selected = (text == newLettersCountState.value.count),
+                        selected = (lettersCount == lettersCountState.value),
                         onClick = null
                     )
                     Text(
-                        text = text.toString(),
+                        text = lettersCount.count.toString(),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
+            }
+        }
+
+        Text(
+            text = localization.chooseLocale(),
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        val localeOptions = supportedLocales
+        Column(Modifier.selectableGroup()) {
+            localeOptions.forEach { locale ->
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .selectable(
+                            selected = (locale == currentLocale.value),
+                            onClick = { currentLocale.value = locale },
+                            role = Role.RadioButton
+                        )
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = (locale == currentLocale.value),
+                        onClick = null
+                    )
+                    Text(
+                        text = locale.toString(),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(start = 16.dp)
                     )
@@ -146,7 +187,6 @@ fun SettingsDialogContent(
             }
         }
     }
-
 }
 
 @Composable

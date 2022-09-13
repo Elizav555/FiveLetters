@@ -132,22 +132,22 @@ val helpText = Translatable(
 )
 
 val chooseLettersCount = Translatable(
-    "Choose letters count :",
+    "Letters count :",
     hashMapOf(
-        RUSSIAN to "Выбрать число букв :",
+        RUSSIAN to "Число букв :",
     )
 )
 
-val chooseLanguage = Translatable(
-    "Choose language :",
+val chooseLocale = Translatable(
+    "Locale :",
     hashMapOf(
-        RUSSIAN to "Выбрать язык :",
+        RUSSIAN to "Язык :",
     )
 )
 
 val isDarkMode = Translatable(
-    "Is Dark mode enabled :",
+    "Dark mode :",
     hashMapOf(
-        RUSSIAN to "Включен ли темный режим :",
+        RUSSIAN to "Темный режим :",
     )
 )

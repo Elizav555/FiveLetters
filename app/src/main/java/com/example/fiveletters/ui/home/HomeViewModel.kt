@@ -9,6 +9,7 @@ import com.example.fiveletters.domain.model.KeyClick
 import com.example.fiveletters.domain.model.Letter
 import com.example.fiveletters.domain.model.LetterState
 import com.example.fiveletters.domain.model.LettersCount
+import com.example.fiveletters.domain.model.SettingsDialogParams
 import com.example.fiveletters.domain.model.Word
 import com.example.fiveletters.domain.utils.MockedKeyboard.myKeyClicks
 import com.example.fiveletters.domain.utils.MockedKeyboard.myKeyboardKeys
@@ -115,7 +116,7 @@ class HomeViewModel @Inject constructor(
                 onConfirmNewGame()
             }
             is UIEvent.ApplySettingEvent -> {
-                onApplySettingsEvent(event.lettersCount)
+                onApplySettingsEvent(event.settingsDialogParams)
             }
             is UIEvent.SetLocaleEvent -> {
                 locale = event.locale
@@ -267,8 +268,8 @@ class HomeViewModel @Inject constructor(
             it.copy(
                 dialogParams = it.dialogParams.copy(
                     dialogType = DialogType.SettingsDialog,
-                    confirmAction = { lettersCount: Any? ->
-                        onEvent(UIEvent.ApplySettingEvent(lettersCount as? LettersCount))
+                    confirmAction = { params: Any? ->
+                        onEvent(UIEvent.ApplySettingEvent(params as? SettingsDialogParams))
                     },
                     isOpened = true,
                 )
@@ -276,11 +277,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun onApplySettingsEvent(lettersCount: LettersCount?) {
-        (lettersCount)?.let {
-            if (_uiState.value.game.lettersCount != lettersCount) {
+    private fun onApplySettingsEvent(params: SettingsDialogParams?) {
+        params?.let {
+            if (_uiState.value.game.lettersCount != params.lettersCount || params.isLocaleChanged) {
                 onNewGame(
-                    lettersCount,
+                    params.lettersCount,
                 )
             } else {
                 closeDialog()

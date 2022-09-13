@@ -1,6 +1,7 @@
 package com.example.fiveletters.ui.events
 
 import com.example.fiveletters.domain.model.LettersCount
+import com.example.fiveletters.domain.model.SettingsDialogParams
 import java.util.Locale
 
 sealed class UIEvent {
@@ -11,6 +12,6 @@ sealed class UIEvent {
     object OpenSettingsEvent : UIEvent()
     object HelpEvent : UIEvent()
     object ConfirmNewGameEvent : UIEvent()
-    data class ApplySettingEvent(val lettersCount: LettersCount?) : UIEvent()
+    data class ApplySettingEvent(val settingsDialogParams: SettingsDialogParams?) : UIEvent()
     data class SetLocaleEvent(val locale: Locale) : UIEvent()
 }

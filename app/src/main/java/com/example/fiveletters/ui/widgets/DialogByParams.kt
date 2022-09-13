@@ -1,5 +1,6 @@
 package com.example.fiveletters.ui.widgets
 
+import LocalLocalization
 import Vocabulary.localization
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -9,6 +10,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.example.fiveletters.domain.model.LettersCount
+import com.example.fiveletters.domain.model.SettingsDialogParams
 import com.example.fiveletters.ui.res.values.apply
 import com.example.fiveletters.ui.res.values.cancel
 import com.example.fiveletters.ui.res.values.dialogConfirmText
@@ -45,7 +47,8 @@ fun DialogByParams(
             SettingsDialog(
                 dialogParams = dialogParams,
                 newLettersCountState = newLettersCountState,
-                changeTheme = changeTheme
+                changeTheme = changeTheme,
+                changeLocale = changeLocale
             )
         }
         is DialogType.TextDialog -> {
@@ -81,8 +84,13 @@ private fun HelpDialog(dialogParams: DialogParams) {
 private fun SettingsDialog(
     dialogParams: DialogParams,
     newLettersCountState: MutableState<LettersCount>,
-    changeTheme: (isDark: Boolean) -> Unit
+    changeTheme: (isDark: Boolean) -> Unit,
+    changeLocale: (locale: Locale) -> Unit
 ) {
+    val localeInitial = LocalLocalization.current.locale
+    val currentLocale = remember {
+        mutableStateOf(localeInitial)
+    }
     AlertDialog(
         onDismissRequest = dialogParams.closeDialogAction,
         title = {
@@ -90,13 +98,22 @@ private fun SettingsDialog(
         },
         text = {
             SettingsDialogContent(
-                newLettersCountState = newLettersCountState,
-                changeTheme = changeTheme
+                lettersCountState = newLettersCountState,
+                changeTheme = changeTheme,
+                currentLocale = currentLocale
             )
         },
         confirmButton = {
             TextButton(
-                onClick = { dialogParams.confirmAction(newLettersCountState.value) }
+                onClick = {
+                    dialogParams.confirmAction(
+                        SettingsDialogParams(
+                            newLettersCountState.value,
+                            currentLocale.value != localeInitial
+                        )
+                    )
+                    changeLocale(currentLocale.value)
+                }
             ) {
                 Text(localization.apply())
             }
