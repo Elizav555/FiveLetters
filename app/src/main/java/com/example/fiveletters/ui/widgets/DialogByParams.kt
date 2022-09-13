@@ -1,5 +1,6 @@
 package com.example.fiveletters.ui.widgets
 
+import Vocabulary
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -30,26 +31,40 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import com.example.fiveletters.R
+import com.example.fiveletters.domain.model.LettersCount
+import com.example.fiveletters.domain.model.lettersCountFromInt
+import com.example.fiveletters.ui.res.theme.FiveLettersTheme
+import com.example.fiveletters.ui.res.values.cancel
+import com.example.fiveletters.ui.res.values.chooseLettersCount
+import com.example.fiveletters.ui.res.values.close
+import com.example.fiveletters.ui.res.values.helpCorrect
+import com.example.fiveletters.ui.res.values.helpText
+import com.example.fiveletters.ui.res.values.helpWrong
+import com.example.fiveletters.ui.res.values.helpWrongPosition
+import com.example.fiveletters.ui.res.values.isDarkMode
 import com.example.fiveletters.ui.state.DialogParams
 import com.example.fiveletters.ui.state.DialogType
 import com.example.fiveletters.ui.state.UIState
-import com.example.fiveletters.ui.theme.FiveLettersTheme
+import java.util.Locale
 
 @Composable
-fun DialogByParams(uiState: UIState, changeTheme: (isDark: Boolean) -> Unit) {
+fun DialogByParams(
+    uiState: UIState,
+    changeTheme: (isDark: Boolean) -> Unit,
+    changeLocale: (locale: Locale) -> Unit
+) {
     val dialogParams = uiState.dialogParams
     val newLettersCount = remember {
         mutableStateOf(uiState.game.lettersCount)
     }
+    val localization = Vocabulary.localization
     AlertDialog(
         onDismissRequest = uiState.dialogParams.closeDialogAction,
         title = {
-            dialogParams.titleId?.let {
-                Text(text = stringResource(id = it))
+            dialogParams.title?.let {
+                Text(text = it)
             }
         },
         text = {
@@ -78,7 +93,7 @@ fun DialogByParams(uiState: UIState, changeTheme: (isDark: Boolean) -> Unit) {
                     }
                 }
             ) {
-                Text(stringResource(id = dialogParams.confirmBtnTextId))
+                Text(dialogParams.confirmBtnText ?: localization.close())
             }
         },
         dismissButton = {
@@ -86,7 +101,7 @@ fun DialogByParams(uiState: UIState, changeTheme: (isDark: Boolean) -> Unit) {
                 TextButton(
                     onClick = dialogParams.closeDialogAction
                 ) {
-                    Text(stringResource(id = R.string.cancel))
+                    Text(localization.cancel())
                 }
             }
         },
@@ -100,10 +115,11 @@ private fun HelpDialogContent(dialogParams: DialogParams) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
+        val localization = Vocabulary.localization
         val colorDesc = listOf(
-            FiveLettersTheme.commonColorScheme.correctBoxColor to R.string.help_correct,
-            FiveLettersTheme.commonColorScheme.wrongPositionBoxColor to R.string.help_wrong_position,
-            FiveLettersTheme.commonColorScheme.wrongBoxColor to R.string.help_wrong,
+            FiveLettersTheme.commonColorScheme.correctBoxColor to localization.helpCorrect(),
+            FiveLettersTheme.commonColorScheme.wrongPositionBoxColor to localization.helpWrongPosition(),
+            FiveLettersTheme.commonColorScheme.wrongBoxColor to localization.helpWrong(),
         )
         colorDesc.forEach {
             Row(
@@ -118,14 +134,14 @@ private fun HelpDialogContent(dialogParams: DialogParams) {
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = stringResource(id = it.second),
+                    text = it.second,
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = stringResource(id = R.string.help_text),
+            text = localization.helpText(),
             style = MaterialTheme.typography.bodyLarge
         )
     }
@@ -133,9 +149,10 @@ private fun HelpDialogContent(dialogParams: DialogParams) {
 
 @Composable
 private fun SettingsDialogContent(
-    newLettersCountState: MutableState<Int>,
+    newLettersCountState: MutableState<LettersCount>,
     changeTheme: (isDark: Boolean) -> Unit
 ) {
+    val localization = Vocabulary.localization
     val isDarkInitial = isSystemInDarkTheme()
     val isDarkTheme = remember {
         mutableStateOf(isDarkInitial)
@@ -147,7 +164,7 @@ private fun SettingsDialogContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(id = R.string.is_dark_mode),
+                text = localization.isDarkMode(),
                 style = MaterialTheme.typography.titleLarge,
             )
             Spacer(modifier = Modifier.width(16.dp))
@@ -160,15 +177,13 @@ private fun SettingsDialogContent(
                 thumbContent = {
                     Icon(
                         imageVector = Icons.Outlined.Check,
-                        contentDescription = stringResource(
-                            id = R.string.is_dark_mode
-                        )
+                        contentDescription = localization.isDarkMode()
                     )
                 }
             )
         }
         Text(
-            text = stringResource(id = R.string.choose_letters_count),
+            text = localization.chooseLettersCount(),
             style = MaterialTheme.typography.titleLarge
         )
         val radioOptions = listOf(5, 6, 7)
@@ -179,15 +194,15 @@ private fun SettingsDialogContent(
                         .fillMaxWidth()
                         .height(56.dp)
                         .selectable(
-                            selected = (text == newLettersCountState.value),
-                            onClick = { newLettersCountState.value = text },
+                            selected = (text == newLettersCountState.value.count),
+                            onClick = { newLettersCountState.value = lettersCountFromInt(text) },
                             role = Role.RadioButton
                         )
                         .padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
-                        selected = (text == newLettersCountState.value),
+                        selected = (text == newLettersCountState.value.count),
                         onClick = null
                     )
                     Text(
@@ -204,5 +219,5 @@ private fun SettingsDialogContent(
 
 @Composable
 private fun TextDialogContent(dialog: DialogType.TextDialog) {
-    Text(text = stringResource(id = dialog.textId, *dialog.textParams.toTypedArray()))
+    Text(text = dialog.text?.format(*dialog.textParams.toTypedArray()) ?: "")
 }

@@ -1,4 +1,4 @@
-package com.example.fiveletters.ui.theme
+package com.example.fiveletters.ui.res.values
 
 import androidx.compose.ui.graphics.Color
 

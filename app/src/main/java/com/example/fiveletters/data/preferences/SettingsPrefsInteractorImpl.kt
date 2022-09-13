@@ -18,7 +18,7 @@ class SettingsPrefsInteractorImpl @Inject constructor(
 
     override suspend fun saveSettings(key: String, settings: Settings) =
         withContext(coroutineDispatcher) {
-            val settingsPrefs = SettingsPrefs(settings.isDarkMode, settings.language)
+            val settingsPrefs = SettingsPrefs(settings.isDarkMode, settings.locale)
             preferences.setItem(key, settingsPrefs)
         }
 

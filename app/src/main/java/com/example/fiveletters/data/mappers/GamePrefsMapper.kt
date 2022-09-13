@@ -13,13 +13,14 @@ import com.example.fiveletters.domain.model.Keyboard
 import com.example.fiveletters.domain.model.Letter
 import com.example.fiveletters.domain.model.Row
 import com.example.fiveletters.domain.model.Word
+import com.example.fiveletters.domain.model.lettersCountFromInt
 
 object GamePrefsMapper {
     fun GamePrefs.toDomain(keyClicks: List<List<KeyClick>>?) = Game(
         hiddenWord = hiddenWord,
         word = word.toDomain(),
         history = history.map { it.toDomain() },
-        lettersCount = lettersCount,
+        lettersCount = lettersCountFromInt(lettersCount),
         guessesCount = guessesCount,
         attempts = attempts,
         keyboard = keyClicks?.let { keyboard.toDomain(it) }?:Keyboard()
