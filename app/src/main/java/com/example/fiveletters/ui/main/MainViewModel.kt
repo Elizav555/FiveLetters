@@ -6,6 +6,7 @@ import com.example.fiveletters.domain.interactors.preferences.SettingsPrefsInter
 import com.example.fiveletters.domain.model.Settings
 import com.example.fiveletters.ui.events.MainEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +29,9 @@ class MainViewModel @Inject constructor(
             is MainEvent.ChangeThemeEvent -> {
                 setMode(event.isDarkMode)
             }
+            is MainEvent.ChangeLocaleEvent -> {
+                setLocale(event.locale)
+            }
         }
     }
 
@@ -38,6 +42,12 @@ class MainViewModel @Inject constructor(
 
     private fun setMode(isDarkMode: Boolean) = viewModelScope.launch {
         val newSettings = _settingsState.value.copy(isDarkMode = isDarkMode)
+        _settingsState.update { newSettings }
+        settingsPrefsInteractor.saveSettings(SETTINGS_KEY, newSettings)
+    }
+
+    private fun setLocale(locale: Locale) = viewModelScope.launch {
+        val newSettings = _settingsState.value.copy(locale = locale)
         _settingsState.update { newSettings }
         settingsPrefsInteractor.saveSettings(SETTINGS_KEY, newSettings)
     }

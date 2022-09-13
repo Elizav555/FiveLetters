@@ -1,7 +1,7 @@
 package com.example.fiveletters.ui.events
 
-import Localization
 import com.example.fiveletters.domain.model.LettersCount
+import java.util.Locale
 
 sealed class UIEvent {
     data class LetterAddedEvent(val letter: String) : UIEvent()
@@ -12,5 +12,5 @@ sealed class UIEvent {
     object HelpEvent : UIEvent()
     object ConfirmNewGameEvent : UIEvent()
     data class ApplySettingEvent(val lettersCount: LettersCount?) : UIEvent()
-    data class SetLocalizationEvent(val localization: Localization) : UIEvent()
+    data class SetLocaleEvent(val locale: Locale) : UIEvent()
 }

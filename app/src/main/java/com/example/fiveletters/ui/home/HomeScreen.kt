@@ -56,7 +56,7 @@ fun HomeScreen(
     }
 
     val localization = Vocabulary.localization
-    viewModel.onEvent(UIEvent.SetLocalizationEvent(localization))
+    viewModel.onEvent(UIEvent.SetLocaleEvent(localization.locale))
 
     val icons = listOf(
         AppBarIcon(
