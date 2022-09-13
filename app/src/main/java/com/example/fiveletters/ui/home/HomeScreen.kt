@@ -1,5 +1,6 @@
 package com.example.fiveletters.ui.home
 
+import LocalLocalization
 import Vocabulary
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -56,7 +57,11 @@ fun HomeScreen(
     }
 
     val localization = Vocabulary.localization
-    viewModel.onEvent(UIEvent.SetLocaleEvent(localization.locale))
+    viewModel.onEvent(
+        UIEvent.SetLocaleEvent(
+            localization.locale
+        )
+    )
 
     val icons = listOf(
         AppBarIcon(

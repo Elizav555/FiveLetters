@@ -54,6 +54,7 @@ class HomeViewModel @Inject constructor(
             onEvent(UIEvent.SubmitEvent)
         }
         keyClicks = myKeyClicks(
+            locale = locale,
             defaultKeyClick = defaultKeyClick,
             eraseKeyClick = eraseKeyClick,
             submitKeyClick = submitKeyClick
@@ -63,6 +64,7 @@ class HomeViewModel @Inject constructor(
                 lettersCount = defaultLettersCount,
                 hiddenWord = getNewHiddenWord(defaultLettersCount),
                 keyboard = myKeyboardKeys(
+                    locale = locale,
                     defaultKeyClick = defaultKeyClick,
                     eraseKeyClick = eraseKeyClick,
                     submitKeyClick = submitKeyClick
@@ -190,8 +192,12 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(game = it.game.copy(word = Word(newWord))) }
     }
 
-    private fun onNewGame(lettersCount: LettersCount = _uiState.value.game.lettersCount) =
+    private fun onNewGame(
+        lettersCount: LettersCount = _uiState.value.game.lettersCount,
+        newLocale: Locale = locale
+    ) =
         viewModelScope.launch {
+            locale = newLocale
             val word = getNewHiddenWord(lettersCount)
             _uiState.update {
                 getInitialUIState()
@@ -282,6 +288,7 @@ class HomeViewModel @Inject constructor(
             if (_uiState.value.game.lettersCount != params.lettersCount || params.isLocaleChanged) {
                 onNewGame(
                     params.lettersCount,
+                    params.locale
                 )
             } else {
                 closeDialog()

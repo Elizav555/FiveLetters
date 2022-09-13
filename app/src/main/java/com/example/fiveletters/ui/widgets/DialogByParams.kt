@@ -108,8 +108,9 @@ private fun SettingsDialog(
                 onClick = {
                     dialogParams.confirmAction(
                         SettingsDialogParams(
-                            newLettersCountState.value,
-                            currentLocale.value != localeInitial
+                            lettersCount = newLettersCountState.value,
+                            isLocaleChanged = currentLocale.value != localeInitial,
+                            locale = currentLocale.value
                         )
                     )
                     changeLocale(currentLocale.value)
