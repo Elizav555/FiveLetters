@@ -122,6 +122,7 @@ class HomeViewModel @Inject constructor(
             }
             is UIEvent.SetLocaleEvent -> {
                 locale = event.locale
+                onNewGame()
             }
         }
         viewModelScope.launch {
