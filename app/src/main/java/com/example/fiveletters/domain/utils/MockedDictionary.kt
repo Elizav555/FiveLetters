@@ -1,6 +1,6 @@
 package com.example.fiveletters.domain.utils
 
-import com.example.fiveletters.domain.model.LettersCount
+import com.example.fiveletters.domain.model.letter.LettersCount
 import com.example.fiveletters.ui.res.values.RUSSIAN
 import java.util.Locale
 

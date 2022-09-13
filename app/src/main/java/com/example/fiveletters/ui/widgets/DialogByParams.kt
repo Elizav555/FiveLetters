@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import com.example.fiveletters.domain.model.LettersCount
+import com.example.fiveletters.domain.model.letter.LettersCount
 import com.example.fiveletters.domain.model.SettingsDialogParams
 import com.example.fiveletters.ui.res.values.apply
 import com.example.fiveletters.ui.res.values.cancel

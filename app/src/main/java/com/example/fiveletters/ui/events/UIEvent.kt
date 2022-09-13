@@ -1,6 +1,5 @@
 package com.example.fiveletters.ui.events
 
-import com.example.fiveletters.domain.model.LettersCount
 import com.example.fiveletters.domain.model.SettingsDialogParams
 import java.util.Locale
 

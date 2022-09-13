@@ -1,4 +1,4 @@
-package com.example.fiveletters.data.model
+package com.example.fiveletters.data.model.prefs
 
 import java.util.Locale
 

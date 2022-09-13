@@ -1,29 +1,28 @@
 package com.example.fiveletters.data.mappers
 
-import com.example.fiveletters.data.model.GamePrefs
-import com.example.fiveletters.data.model.KeyPrefs
-import com.example.fiveletters.data.model.KeyboardPrefs
-import com.example.fiveletters.data.model.LetterPrefs
-import com.example.fiveletters.data.model.RowPrefs
-import com.example.fiveletters.data.model.WordPrefs
+import com.example.fiveletters.data.model.prefs.GamePrefs
+import com.example.fiveletters.data.model.prefs.KeyPrefs
+import com.example.fiveletters.data.model.prefs.KeyboardPrefs
+import com.example.fiveletters.data.model.prefs.LetterPrefs
+import com.example.fiveletters.data.model.prefs.RowPrefs
+import com.example.fiveletters.data.model.prefs.WordPrefs
 import com.example.fiveletters.domain.model.Game
-import com.example.fiveletters.domain.model.Key
-import com.example.fiveletters.domain.model.KeyClick
-import com.example.fiveletters.domain.model.Keyboard
-import com.example.fiveletters.domain.model.Letter
-import com.example.fiveletters.domain.model.Row
+import com.example.fiveletters.domain.model.keyboard.Key
+import com.example.fiveletters.domain.model.keyboard.Keyboard
+import com.example.fiveletters.domain.model.letter.Letter
+import com.example.fiveletters.domain.model.keyboard.Row
 import com.example.fiveletters.domain.model.Word
-import com.example.fiveletters.domain.model.lettersCountFromInt
+import com.example.fiveletters.domain.model.letter.lettersCountFromInt
 
 object GamePrefsMapper {
-    fun GamePrefs.toDomain(keyClicks: List<List<KeyClick>>?) = Game(
+    fun GamePrefs.toDomain() = Game(
         hiddenWord = hiddenWord,
         word = word.toDomain(),
         history = history.map { it.toDomain() },
         lettersCount = lettersCountFromInt(lettersCount),
         guessesCount = guessesCount,
         attempts = attempts,
-        keyboard = keyClicks?.let { keyboard.toDomain(it) }?:Keyboard()
+        keyboard = keyboard.toDomain()
     )
 
     private fun WordPrefs.toDomain() = Word(
@@ -34,15 +33,15 @@ object GamePrefsMapper {
         symbol = symbol, state = state
     )
 
-    private fun KeyboardPrefs.toDomain(keyClicks: List<List<KeyClick>>) = Keyboard(
-        rows = rows.mapIndexed { index, row -> row.toDomain(keyClicks[index]) }
+    private fun KeyboardPrefs.toDomain() = Keyboard(
+        rows = rows.map { it.toDomain() }
     )
 
-    private fun RowPrefs.toDomain(keyClicks: List<KeyClick>) = Row(
-        keys = keys.mapIndexed { index, key -> key.toDomain(keyClicks[index]) }
+    private fun RowPrefs.toDomain() = Row(
+        keys = keys.map { it.toDomain() }
     )
 
-    private fun KeyPrefs.toDomain(keyClick: KeyClick) = Key(
-        symbol = symbol, isWrong = isWrong, keyClick = keyClick
+    private fun KeyPrefs.toDomain() = Key(
+        symbol = symbol, isWrong = isWrong, keyType = keyType
     )
 }

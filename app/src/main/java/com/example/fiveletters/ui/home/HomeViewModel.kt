@@ -5,15 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.fiveletters.di.coroutines.qualifiers.DefaultDispatcher
 import com.example.fiveletters.domain.interactors.preferences.GamePrefsInteractor
 import com.example.fiveletters.domain.model.Game
-import com.example.fiveletters.domain.model.KeyClick
-import com.example.fiveletters.domain.model.Letter
-import com.example.fiveletters.domain.model.LetterState
-import com.example.fiveletters.domain.model.LettersCount
 import com.example.fiveletters.domain.model.SettingsDialogParams
 import com.example.fiveletters.domain.model.Word
-import com.example.fiveletters.domain.utils.MockedKeyboard.myKeyClicks
-import com.example.fiveletters.domain.utils.MockedKeyboard.myKeyboardKeys
+import com.example.fiveletters.domain.model.keyboard.KeyClick
+import com.example.fiveletters.domain.model.letter.Letter
+import com.example.fiveletters.domain.model.letter.LetterState
+import com.example.fiveletters.domain.model.letter.LettersCount
 import com.example.fiveletters.domain.utils.mockedDictionary
+import com.example.fiveletters.domain.utils.myKeyboardKeys
 import com.example.fiveletters.ui.events.UIEvent
 import com.example.fiveletters.ui.state.DialogParams
 import com.example.fiveletters.ui.state.DialogType
@@ -44,30 +43,12 @@ class HomeViewModel @Inject constructor(
 
     private fun getInitialUIState(): UIState {
         val defaultLettersCount = LettersCount.FIVE
-        val defaultKeyClick: KeyClick = { letter: String? ->
-            letter?.let { onEvent(UIEvent.LetterAddedEvent(it)) }
-        }
-        val eraseKeyClick: KeyClick = {
-            onEvent(UIEvent.ErasedEvent)
-        }
-        val submitKeyClick: KeyClick = {
-            onEvent(UIEvent.SubmitEvent)
-        }
-        keyClicks = myKeyClicks(
-            locale = locale,
-            defaultKeyClick = defaultKeyClick,
-            eraseKeyClick = eraseKeyClick,
-            submitKeyClick = submitKeyClick
-        )
         return UIState(
             game = Game(
                 lettersCount = defaultLettersCount,
                 hiddenWord = getNewHiddenWord(defaultLettersCount),
                 keyboard = myKeyboardKeys(
-                    locale = locale,
-                    defaultKeyClick = defaultKeyClick,
-                    eraseKeyClick = eraseKeyClick,
-                    submitKeyClick = submitKeyClick
+                    locale = locale
                 )
             ),
             dialogParams = DialogParams(

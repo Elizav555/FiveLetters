@@ -1,6 +1,6 @@
 package com.example.fiveletters.data.preferences
 
-import com.example.fiveletters.data.model.SettingsPrefs
+import com.example.fiveletters.data.model.prefs.SettingsPrefs
 import com.example.fiveletters.di.coroutines.qualifiers.IoDispatcher
 import com.example.fiveletters.domain.interactors.preferences.SettingsPrefsInteractor
 import com.example.fiveletters.domain.model.Settings

@@ -1,5 +1,7 @@
 package com.example.fiveletters.domain.model
 
+import com.example.fiveletters.domain.model.letter.Letter
+
 data class Word(
     val letters: List<Letter> = emptyList()
 ) {
