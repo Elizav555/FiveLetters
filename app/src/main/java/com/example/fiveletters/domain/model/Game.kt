@@ -7,4 +7,5 @@ data class Game(
     val lettersCount: Int,
     val guessesCount: Int = 5,
     val attempts: Int = 1,
+    val keyboard : Keyboard
 )

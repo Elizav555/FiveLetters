@@ -15,11 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fiveletters.domain.model.Key
-import com.example.fiveletters.domain.utils.myKeyboardKeys
+import com.example.fiveletters.domain.model.Keyboard
+import com.example.fiveletters.ui.theme.FiveLettersTheme
 
 @Composable
 fun KeyBox(modifier: Modifier = Modifier, key: Key) {
@@ -37,7 +37,7 @@ fun KeyBox(modifier: Modifier = Modifier, key: Key) {
         text = key.symbol,
         textAlign = TextAlign.Center,
         fontSize = 22.sp,
-        color = MaterialTheme.colorScheme.primary
+        color = if (key.isWrong) FiveLettersTheme.commonColorScheme.wrongBoxColor else MaterialTheme.colorScheme.primary
     )
 }
 
@@ -57,7 +57,7 @@ fun KeyRow(modifier: Modifier = Modifier, keys: List<Key>) {
 }
 
 @Composable
-fun Keyboard(modifier: Modifier = Modifier, keys: List<List<Key>>) {
+fun KeyboardWidget(modifier: Modifier = Modifier, keyboard: Keyboard) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -65,14 +65,8 @@ fun Keyboard(modifier: Modifier = Modifier, keys: List<List<Key>>) {
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        keys.forEach {
-            KeyRow(keys = it)
+        keyboard.rows.forEach {
+            KeyRow(keys = it.keys)
         }
     }
-}
-
-@Preview(showBackground = true, backgroundColor = 0x989a82)
-@Composable
-fun KeyboardPreview() {
-    Keyboard(keys = myKeyboardKeys({}, {}, {}))
 }

@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Word(
+data class WordApi(
     @SerialName("id") val id: Int,
     @SerialName("word") val word: String,
 )
