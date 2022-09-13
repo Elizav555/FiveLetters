@@ -18,7 +18,7 @@ object GameDomainMapper {
         hiddenWord = hiddenWord,
         word = word.toPrefs(),
         history = history.map { it.toPrefs() },
-        lettersCount = lettersCount,
+        lettersCount = lettersCount.count,
         guessesCount = guessesCount,
         attempts = attempts,
         keyboard = keyboard.toPrefs()

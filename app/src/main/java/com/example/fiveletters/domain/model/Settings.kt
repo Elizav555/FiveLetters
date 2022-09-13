@@ -1,6 +1,8 @@
 package com.example.fiveletters.domain.model
 
+import java.util.Locale
+
 data class Settings(
     val isDarkMode: Boolean? = null,
-    val language: String = "english" //TODO change
+    val locale: Locale = Locale.ENGLISH
 )

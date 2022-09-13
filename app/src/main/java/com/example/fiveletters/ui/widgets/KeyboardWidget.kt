@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fiveletters.domain.model.Key
 import com.example.fiveletters.domain.model.Keyboard
-import com.example.fiveletters.ui.theme.FiveLettersTheme
+import com.example.fiveletters.ui.res.theme.FiveLettersTheme
 
 @Composable
 fun KeyBox(modifier: Modifier = Modifier, key: Key) {

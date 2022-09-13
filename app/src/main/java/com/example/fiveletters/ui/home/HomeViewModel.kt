@@ -2,13 +2,14 @@ package com.example.fiveletters.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fiveletters.R
 import com.example.fiveletters.di.coroutines.qualifiers.DefaultDispatcher
 import com.example.fiveletters.domain.interactors.preferences.GamePrefsInteractor
 import com.example.fiveletters.domain.model.Game
 import com.example.fiveletters.domain.model.KeyClick
 import com.example.fiveletters.domain.model.Letter
 import com.example.fiveletters.domain.model.LetterState
+import com.example.fiveletters.domain.model.LettersCount
+import com.example.fiveletters.domain.model.SettingsDialogParams
 import com.example.fiveletters.domain.model.Word
 import com.example.fiveletters.domain.utils.MockedKeyboard.myKeyClicks
 import com.example.fiveletters.domain.utils.MockedKeyboard.myKeyboardKeys
@@ -16,8 +17,10 @@ import com.example.fiveletters.domain.utils.mockedDictionary
 import com.example.fiveletters.ui.events.UIEvent
 import com.example.fiveletters.ui.state.DialogParams
 import com.example.fiveletters.ui.state.DialogType
+import com.example.fiveletters.ui.state.TextDialogType
 import com.example.fiveletters.ui.state.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,14 +35,15 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<UIState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<UIState> = _uiState
-    private var keyClicks :List<List<KeyClick>>?=null
+    private var keyClicks: List<List<KeyClick>>? = null
+    private var locale: Locale = Locale.ENGLISH
 
     init {
         initGame()
     }
 
     private fun getInitialUIState(): UIState {
-        val defaultLettersCount = 5
+        val defaultLettersCount = LettersCount.FIVE
         val defaultKeyClick: KeyClick = { letter: String? ->
             letter?.let { onEvent(UIEvent.LetterAddedEvent(it)) }
         }
@@ -50,6 +54,7 @@ class HomeViewModel @Inject constructor(
             onEvent(UIEvent.SubmitEvent)
         }
         keyClicks = myKeyClicks(
+            locale = locale,
             defaultKeyClick = defaultKeyClick,
             eraseKeyClick = eraseKeyClick,
             submitKeyClick = submitKeyClick
@@ -59,6 +64,7 @@ class HomeViewModel @Inject constructor(
                 lettersCount = defaultLettersCount,
                 hiddenWord = getNewHiddenWord(defaultLettersCount),
                 keyboard = myKeyboardKeys(
+                    locale = locale,
                     defaultKeyClick = defaultKeyClick,
                     eraseKeyClick = eraseKeyClick,
                     submitKeyClick = submitKeyClick
@@ -66,10 +72,9 @@ class HomeViewModel @Inject constructor(
             ),
             dialogParams = DialogParams(
                 dialogType = DialogType.TextDialog(
-                    textId = R.string.app_name
+                    textDialogType = TextDialogType.CONFIRM
                 ),
                 confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
-                confirmBtnTextId = R.string.close_dialog,
                 closeDialogAction = { closeDialog() }
             ),
         )
@@ -113,7 +118,10 @@ class HomeViewModel @Inject constructor(
                 onConfirmNewGame()
             }
             is UIEvent.ApplySettingEvent -> {
-                onApplySettingsEvent(event.lettersCount)
+                onApplySettingsEvent(event.settingsDialogParams)
+            }
+            is UIEvent.SetLocaleEvent -> {
+                locale = event.locale
             }
         }
         viewModelScope.launch {
@@ -122,7 +130,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun onLetterAdded(letter: String) = with(_uiState.value.game) {
-        if (word.letters.count() >= lettersCount) {
+        if (word.letters.count() >= lettersCount.count) {
             return@with
         }
         val newWord = word.letters.toMutableList().apply { add(Letter(letter)) }
@@ -130,7 +138,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun onSubmit() = with(_uiState.value.game) {
-        if (word.letters.count() < lettersCount) {
+        if (word.letters.count() < lettersCount.count) {
             return@with
         }
         viewModelScope.launch(defaultDispatcher) {
@@ -138,7 +146,7 @@ class HomeViewModel @Inject constructor(
             val newWord = word.letters.toMutableList()
             var newAttempts = attempts
             val keyboard = _uiState.value.game.keyboard
-            repeat(lettersCount) { index ->
+            repeat(lettersCount.count) { index ->
                 if (word.letters[index].symbol == hiddenWord[index].uppercase()) {
                     rightLettersCount++
                     newWord[index].state = LetterState.CORRECT
@@ -155,7 +163,7 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             }
-            if (rightLettersCount == lettersCount) {
+            if (rightLettersCount == lettersCount.count) {
                 onWonGame()
             } else if (attempts == guessesCount) {
                 onLostGame()
@@ -184,9 +192,13 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(game = it.game.copy(word = Word(newWord))) }
     }
 
-    private fun onNewGame(lettersCount: Int = _uiState.value.game.lettersCount) =
+    private fun onNewGame(
+        lettersCount: LettersCount = _uiState.value.game.lettersCount,
+        newLocale: Locale = locale
+    ) =
         viewModelScope.launch {
-            val word = mockedDictionary.random()
+            locale = newLocale
+            val word = getNewHiddenWord(lettersCount)
             _uiState.update {
                 getInitialUIState()
             }
@@ -207,11 +219,9 @@ class HomeViewModel @Inject constructor(
             it.copy(
                 dialogParams = it.dialogParams.copy(
                     dialogType = DialogType.TextDialog(
-                        textId = R.string.dialog_win_text,
+                        textDialogType = TextDialogType.WON
                     ),
-                    titleId = R.string.dialog_win_title,
                     confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
-                    confirmBtnTextId = R.string.new_game,
                     isOpened = true
                 )
             )
@@ -223,11 +233,9 @@ class HomeViewModel @Inject constructor(
             it.copy(
                 dialogParams = it.dialogParams.copy(
                     dialogType = DialogType.TextDialog(
-                        textId = R.string.dialog_confirm_text,
+                        textDialogType = TextDialogType.CONFIRM
                     ),
-                    titleId = R.string.dialog_confirm_title,
                     confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
-                    confirmBtnTextId = R.string.new_game,
                     isOpened = true
                 )
             )
@@ -239,12 +247,10 @@ class HomeViewModel @Inject constructor(
             it.copy(
                 dialogParams = it.dialogParams.copy(
                     dialogType = DialogType.TextDialog(
-                        textId = R.string.dialog_lost_text,
-                        textParams = listOf(_uiState.value.game.hiddenWord)
+                        textParams = listOf(_uiState.value.game.hiddenWord),
+                        textDialogType = TextDialogType.LOST
                     ),
-                    titleId = R.string.dialog_lost_title,
                     confirmAction = { onEvent(UIEvent.NewGameStartedEvent) },
-                    confirmBtnTextId = R.string.new_game,
                     isOpened = true
                 )
             )
@@ -256,9 +262,7 @@ class HomeViewModel @Inject constructor(
             it.copy(
                 dialogParams = it.dialogParams.copy(
                     dialogType = DialogType.HelpDialog,
-                    titleId = R.string.dialog_help_title,
                     confirmAction = { closeDialog() },
-                    confirmBtnTextId = R.string.got_it,
                     isOpened = true,
                 )
             )
@@ -270,21 +274,21 @@ class HomeViewModel @Inject constructor(
             it.copy(
                 dialogParams = it.dialogParams.copy(
                     dialogType = DialogType.SettingsDialog,
-                    confirmAction = { lettersCount: Any? ->
-                        onEvent(UIEvent.ApplySettingEvent(lettersCount as? Int))
+                    confirmAction = { params: Any? ->
+                        onEvent(UIEvent.ApplySettingEvent(params as? SettingsDialogParams))
                     },
-                    confirmBtnTextId = R.string.apply,
                     isOpened = true,
                 )
             )
         }
     }
 
-    private fun onApplySettingsEvent(lettersCount: Int?) {
-        (lettersCount)?.let { int ->
-            if (_uiState.value.game.lettersCount != int) {
+    private fun onApplySettingsEvent(params: SettingsDialogParams?) {
+        params?.let {
+            if (_uiState.value.game.lettersCount != params.lettersCount || params.isLocaleChanged) {
                 onNewGame(
-                    int,
+                    params.lettersCount,
+                    params.locale
                 )
             } else {
                 closeDialog()
@@ -301,9 +305,9 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    private fun getNewHiddenWord(lettersCount: Int): String {
+    private fun getNewHiddenWord(lettersCount: LettersCount): String {
         //TODO
-        return mockedDictionary.random()
+        return mockedDictionary(locale, lettersCount).random()
     }
 
     companion object {
