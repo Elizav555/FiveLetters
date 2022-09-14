@@ -1,12 +1,16 @@
 package com.example.fiveletters.ui.home
 
 import Vocabulary
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Refresh
@@ -58,7 +62,6 @@ fun HomeScreen(
     val snackbarHostState = remember {
         SnackbarHostState()
     }
-
     val localization = Vocabulary.localization
     viewModel.onEvent(
         UIEvent.SetLocaleEvent(
@@ -68,7 +71,10 @@ fun HomeScreen(
 
     LaunchedEffect(key1 = Unit) {
         viewModel.errorMsgEvent.collect {
-            snackbarHostState.showSnackbar(message = it ?: localization.error(), withDismissAction = true)
+            snackbarHostState.showSnackbar(
+                message = it ?: localization.error(),
+                withDismissAction = true
+            )
         }
     }
 
@@ -124,7 +130,8 @@ private fun HomeScreenLayout(
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         topBar = {
             SmallTopAppBar(
                 title = {
@@ -178,6 +185,7 @@ fun HomeContent(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(all = 8.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
