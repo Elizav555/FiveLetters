@@ -17,17 +17,19 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.fiveletters.domain.model.Key
-import com.example.fiveletters.domain.model.Keyboard
-import com.example.fiveletters.ui.theme.FiveLettersTheme
+import com.example.fiveletters.domain.model.keyboard.Key
+import com.example.fiveletters.domain.model.keyboard.KeyClick
+import com.example.fiveletters.domain.model.keyboard.KeyType
+import com.example.fiveletters.domain.model.keyboard.Keyboard
+import com.example.fiveletters.ui.res.theme.FiveLettersTheme
 
 @Composable
-fun KeyBox(modifier: Modifier = Modifier, key: Key) {
+fun KeyBox(modifier: Modifier = Modifier, key: Key, keyClick: KeyClick) {
     Text(
         modifier = modifier
             .clip(shape = MaterialTheme.shapes.small)
             .shadow(elevation = 2.dp)
-            .clickable(onClick = { key.keyClick(key.symbol) })
+            .clickable(onClick = { keyClick(key.symbol) })
             .border(
                 width = 1.dp,
                 shape = MaterialTheme.shapes.small,
@@ -42,7 +44,7 @@ fun KeyBox(modifier: Modifier = Modifier, key: Key) {
 }
 
 @Composable
-fun KeyRow(modifier: Modifier = Modifier, keys: List<Key>) {
+fun KeyRow(modifier: Modifier = Modifier, keys: List<Key>, keyClickMap: Map<KeyType, KeyClick>) {
     Row(
         modifier = modifier
     ) {
@@ -50,14 +52,20 @@ fun KeyRow(modifier: Modifier = Modifier, keys: List<Key>) {
             KeyBox(
                 modifier = Modifier
                     .padding(2.dp)
-                    .weight(1f, fill = false), key = it
+                    .weight(1f, fill = false),
+                key = it,
+                keyClick = keyClickMap[it.keyType] ?: {}
             )
         }
     }
 }
 
 @Composable
-fun KeyboardWidget(modifier: Modifier = Modifier, keyboard: Keyboard) {
+fun KeyboardWidget(
+    modifier: Modifier = Modifier,
+    keyboard: Keyboard,
+    keyClickMap: Map<KeyType, KeyClick>
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -66,7 +74,7 @@ fun KeyboardWidget(modifier: Modifier = Modifier, keyboard: Keyboard) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         keyboard.rows.forEach {
-            KeyRow(keys = it.keys)
+            KeyRow(keys = it.keys, keyClickMap = keyClickMap)
         }
     }
 }

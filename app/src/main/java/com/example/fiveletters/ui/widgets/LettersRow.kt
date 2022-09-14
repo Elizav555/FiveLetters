@@ -25,10 +25,10 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.fiveletters.domain.model.Letter
-import com.example.fiveletters.domain.model.LetterState
+import com.example.fiveletters.domain.model.letter.Letter
+import com.example.fiveletters.domain.model.letter.LetterState
 import com.example.fiveletters.domain.model.Word
-import com.example.fiveletters.ui.theme.FiveLettersTheme
+import com.example.fiveletters.ui.res.theme.FiveLettersTheme
 
 @Composable
 fun LetterBox(modifier: Modifier = Modifier, letter: Letter, index: Int, count: Int) {

@@ -1,6 +1,6 @@
 package com.example.fiveletters.data.preferences
 
-import com.example.fiveletters.data.model.SettingsPrefs
+import com.example.fiveletters.data.model.prefs.SettingsPrefs
 import com.example.fiveletters.di.coroutines.qualifiers.IoDispatcher
 import com.example.fiveletters.domain.interactors.preferences.SettingsPrefsInteractor
 import com.example.fiveletters.domain.model.Settings
@@ -18,7 +18,7 @@ class SettingsPrefsInteractorImpl @Inject constructor(
 
     override suspend fun saveSettings(key: String, settings: Settings) =
         withContext(coroutineDispatcher) {
-            val settingsPrefs = SettingsPrefs(settings.isDarkMode, settings.language)
+            val settingsPrefs = SettingsPrefs(settings.isDarkMode, settings.locale)
             preferences.setItem(key, settingsPrefs)
         }
 
@@ -28,6 +28,6 @@ class SettingsPrefsInteractorImpl @Inject constructor(
                 key,
                 object : TypeToken<SettingsPrefs?>() {}.type
             )
-            settingsPrefs?.let { Settings(it.isDarkMode, it.language) }
+            settingsPrefs?.let { Settings(it.isDarkMode, it.locale) }
         }
 }

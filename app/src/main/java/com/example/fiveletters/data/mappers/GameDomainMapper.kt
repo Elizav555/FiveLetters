@@ -1,16 +1,16 @@
 package com.example.fiveletters.data.mappers
 
-import com.example.fiveletters.data.model.GamePrefs
-import com.example.fiveletters.data.model.KeyPrefs
-import com.example.fiveletters.data.model.KeyboardPrefs
-import com.example.fiveletters.data.model.LetterPrefs
-import com.example.fiveletters.data.model.RowPrefs
-import com.example.fiveletters.data.model.WordPrefs
+import com.example.fiveletters.data.model.prefs.GamePrefs
+import com.example.fiveletters.data.model.prefs.KeyPrefs
+import com.example.fiveletters.data.model.prefs.KeyboardPrefs
+import com.example.fiveletters.data.model.prefs.LetterPrefs
+import com.example.fiveletters.data.model.prefs.RowPrefs
+import com.example.fiveletters.data.model.prefs.WordPrefs
 import com.example.fiveletters.domain.model.Game
-import com.example.fiveletters.domain.model.Key
-import com.example.fiveletters.domain.model.Keyboard
-import com.example.fiveletters.domain.model.Letter
-import com.example.fiveletters.domain.model.Row
+import com.example.fiveletters.domain.model.keyboard.Key
+import com.example.fiveletters.domain.model.keyboard.Keyboard
+import com.example.fiveletters.domain.model.letter.Letter
+import com.example.fiveletters.domain.model.keyboard.Row
 import com.example.fiveletters.domain.model.Word
 
 object GameDomainMapper {
@@ -18,7 +18,7 @@ object GameDomainMapper {
         hiddenWord = hiddenWord,
         word = word.toPrefs(),
         history = history.map { it.toPrefs() },
-        lettersCount = lettersCount,
+        lettersCount = lettersCount.count,
         guessesCount = guessesCount,
         attempts = attempts,
         keyboard = keyboard.toPrefs()
@@ -41,6 +41,6 @@ object GameDomainMapper {
     )
 
     private fun Key.toPrefs() = KeyPrefs(
-        symbol = symbol, isWrong = isWrong
+        symbol = symbol, isWrong = isWrong, keyType = keyType
     )
 }

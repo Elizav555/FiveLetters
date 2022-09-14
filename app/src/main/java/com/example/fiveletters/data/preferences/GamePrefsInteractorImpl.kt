@@ -2,11 +2,10 @@ package com.example.fiveletters.data.preferences
 
 import com.example.fiveletters.data.mappers.GameDomainMapper.toPrefs
 import com.example.fiveletters.data.mappers.GamePrefsMapper.toDomain
-import com.example.fiveletters.data.model.GamePrefs
+import com.example.fiveletters.data.model.prefs.GamePrefs
 import com.example.fiveletters.di.coroutines.qualifiers.IoDispatcher
 import com.example.fiveletters.domain.interactors.preferences.GamePrefsInteractor
 import com.example.fiveletters.domain.model.Game
-import com.example.fiveletters.domain.model.KeyClick
 import com.example.fiveletters.domain.preferences.Preferences
 import com.google.gson.reflect.TypeToken
 import javax.inject.Inject
@@ -24,12 +23,12 @@ class GamePrefsInteractorImpl @Inject constructor(
             preferences.setItem(key, gamePrefs)
         }
 
-    override suspend fun getGame(key: String, keyClicks: List<List<KeyClick>>?): Game? =
+    override suspend fun getGame(key: String): Game? =
         withContext(coroutineDispatcher) {
             val gamePrefs: GamePrefs? = preferences.getItem(
                 key,
                 object : TypeToken<GamePrefs?>() {}.type
             )
-            gamePrefs?.let { it.toDomain(keyClicks) }
+            gamePrefs?.let { it.toDomain() }
         }
 }

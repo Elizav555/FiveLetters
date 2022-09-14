@@ -1,4 +1,4 @@
-package com.example.fiveletters.ui.state
+package com.example.fiveletters.ui.model
 
 import com.example.fiveletters.domain.model.Game
 

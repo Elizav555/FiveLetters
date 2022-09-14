@@ -1,4 +1,4 @@
-package com.example.fiveletters.ui.state
+package com.example.fiveletters.ui.model
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

@@ -1,5 +1,6 @@
 package com.example.fiveletters.ui.home
 
+import Vocabulary
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,15 +32,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fiveletters.R
+import com.example.fiveletters.domain.model.keyboard.KeyClick
+import com.example.fiveletters.domain.model.keyboard.KeyType
 import com.example.fiveletters.ui.events.UIEvent
-import com.example.fiveletters.ui.state.AppBarIcon
-import com.example.fiveletters.ui.state.UIState
+import com.example.fiveletters.ui.res.values.dialogHelpTitle
+import com.example.fiveletters.ui.res.values.dialogSettingsTitle
+import com.example.fiveletters.ui.res.values.newGame
+import com.example.fiveletters.ui.model.AppBarIcon
+import com.example.fiveletters.ui.model.UIState
 import com.example.fiveletters.ui.widgets.DialogByParams
 import com.example.fiveletters.ui.widgets.KeyboardWidget
 import com.example.fiveletters.ui.widgets.LettersRow
+import java.util.Locale
 
 @Composable
-fun HomeScreen(changeTheme: (isDark: Boolean) -> Unit) {
+fun HomeScreen(
+    changeTheme: (isDark: Boolean) -> Unit,
+    changeLocale: (locale: Locale) -> Unit
+) {
     val viewModel = hiltViewModel<HomeViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
@@ -47,21 +57,40 @@ fun HomeScreen(changeTheme: (isDark: Boolean) -> Unit) {
         SnackbarHostState()
     }
 
+    val localization = Vocabulary.localization
+    viewModel.onEvent(
+        UIEvent.SetLocaleEvent(
+            localization.locale
+        )
+    )
+
+    val keyCLickMap:Map<KeyType, KeyClick>  = mapOf(
+        KeyType.DEFAULT to { letter: String? ->
+            letter?.let { viewModel.onEvent(UIEvent.LetterAddedEvent(it)) }
+        },
+        KeyType.ERASE to {
+            viewModel.onEvent(UIEvent.ErasedEvent)
+        },
+        KeyType.SUBMIT to {
+            viewModel.onEvent(UIEvent.SubmitEvent)
+        }
+    )
+
     val icons = listOf(
         AppBarIcon(
             icon = Icons.Outlined.Refresh,
             onClick = { viewModel.onEvent(UIEvent.ConfirmNewGameEvent) },
-            desc = stringResource(id = R.string.new_game)
+            desc = localization.newGame()
         ),
         AppBarIcon(
             icon = Icons.Outlined.Settings,
             onClick = { viewModel.onEvent(UIEvent.OpenSettingsEvent) },
-            desc = stringResource(id = R.string.dialog_settings_title)
+            desc = localization.dialogSettingsTitle()
         ),
         AppBarIcon(
             icon = Icons.Outlined.Info,
             onClick = { viewModel.onEvent(UIEvent.HelpEvent) },
-            desc = stringResource(id = R.string.dialog_help_title)
+            desc = localization.dialogHelpTitle()
         ),
     )
 
@@ -69,7 +98,9 @@ fun HomeScreen(changeTheme: (isDark: Boolean) -> Unit) {
         uiState = uiState,
         icons = icons,
         snackbarHostState = snackbarHostState,
-        changeTheme = changeTheme
+        changeTheme = changeTheme,
+        changeLocale = changeLocale,
+        keyClickMap = keyCLickMap
     )
 }
 
@@ -79,7 +110,9 @@ private fun HomeScreenLayout(
     uiState: UIState,
     icons: List<AppBarIcon>,
     snackbarHostState: SnackbarHostState,
-    changeTheme: (isDark: Boolean) -> Unit
+    changeTheme: (isDark: Boolean) -> Unit,
+    changeLocale: (locale: Locale) -> Unit,
+    keyClickMap: Map<KeyType, KeyClick>
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -100,12 +133,13 @@ private fun HomeScreenLayout(
         },
         content = { padding ->
             if (uiState.dialogParams.isOpened) {
-                DialogByParams(uiState, changeTheme)
+                DialogByParams(uiState, changeTheme, changeLocale)
             }
             if (uiState.isInited) {
                 HomeContent(
                     modifier = Modifier.padding(padding),
                     uiState = uiState,
+                    keyClickMap = keyClickMap
                 )
             } else {
                 Loading()
@@ -130,7 +164,8 @@ private fun AppBarActions(icons: List<AppBarIcon>) {
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
-    uiState: UIState
+    uiState: UIState,
+    keyClickMap: Map<KeyType, KeyClick>
 ) {
     Column(
         modifier = modifier
@@ -150,12 +185,12 @@ fun HomeContent(
                 val word = uiState.game.history.getOrNull(it) ?: uiState.game.word
                 LettersRow(
                     word = word,
-                    count = uiState.game.lettersCount,
+                    count = uiState.game.lettersCount.count,
                 )
             }
         }
         KeyboardWidget(
-            keyboard = uiState.game.keyboard
+            keyboard = uiState.game.keyboard, keyClickMap = keyClickMap
         )
     }
 }

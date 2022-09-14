@@ -1,5 +1,6 @@
 package com.example.fiveletters.ui.main
 
+import Localization
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,8 +11,9 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fiveletters.ui.events.MainEvent
 import com.example.fiveletters.ui.home.HomeScreen
-import com.example.fiveletters.ui.theme.FiveLettersTheme
+import com.example.fiveletters.ui.res.theme.FiveLettersTheme
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -27,9 +29,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainActivityContent() {
     val viewModel = hiltViewModel<MainViewModel>()
-    val isDarkModeState by viewModel.settingsState.collectAsState()
+    val settingsState by viewModel.settingsState.collectAsState()
     val changeTheme = { isDark: Boolean -> viewModel.onEvent(MainEvent.ChangeThemeEvent(isDark)) }
-    FiveLettersTheme(darkTheme = isDarkModeState.isDarkMode ?: isSystemInDarkTheme()) {
-        HomeScreen(changeTheme)
+    val changeLocale = { locale: Locale -> viewModel.onEvent(MainEvent.ChangeLocaleEvent(locale)) }
+    FiveLettersTheme(darkTheme = settingsState.isDarkMode ?: isSystemInDarkTheme()) {
+        Localization(locale = settingsState.locale) {
+            HomeScreen(changeTheme, changeLocale)
+        }
     }
 }
