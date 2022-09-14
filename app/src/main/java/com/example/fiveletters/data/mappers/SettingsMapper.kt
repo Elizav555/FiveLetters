@@ -5,10 +5,10 @@ import com.example.fiveletters.domain.model.Settings
 
 object SettingsMapper {
     fun SettingsPrefs.mapToDomain() = Settings(
-        isDarkMode = isDarkMode, locale = language
+        isDarkMode = isDarkMode, locale = locale
     )
 
     fun Settings.mapToPrefs() = SettingsPrefs(
-        isDarkMode = isDarkMode, language = locale
+        isDarkMode = isDarkMode, locale = locale
     )
 }

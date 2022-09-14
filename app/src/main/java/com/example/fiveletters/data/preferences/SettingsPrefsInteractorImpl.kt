@@ -28,6 +28,6 @@ class SettingsPrefsInteractorImpl @Inject constructor(
                 key,
                 object : TypeToken<SettingsPrefs?>() {}.type
             )
-            settingsPrefs?.let { Settings(it.isDarkMode, it.language) }
+            settingsPrefs?.let { Settings(it.isDarkMode, it.locale) }
         }
 }

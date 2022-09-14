@@ -1,5 +1,9 @@
 package com.example.fiveletters.data.model.prefs
 
-data class WordPrefs (
-    val letters: List<LetterPrefs> = emptyList()
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class WordPrefs(
+    @SerialName("letters") val letters: List<LetterPrefs>
 )

@@ -1,11 +1,15 @@
 package com.example.fiveletters.data.model.prefs
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class GamePrefs(
-    val hiddenWord: String,
-    val word: WordPrefs = WordPrefs(),
-    val history: List<WordPrefs> = emptyList(),
-    val lettersCount: Int,
-    val guessesCount: Int = 5,
-    val attempts: Int = 1,
-    val keyboard : KeyboardPrefs
+    @SerialName("hiddenWord") val hiddenWord: String,
+    @SerialName("word") val word: WordPrefs,
+    @SerialName("history") val history: List<WordPrefs>,
+    @SerialName("lettersCount") val lettersCount: Int,
+    @SerialName("guessesCount") val guessesCount: Int ,
+    @SerialName("attempts") val attempts: Int,
+    @SerialName("keyboard") val keyboard: KeyboardPrefs
 )
