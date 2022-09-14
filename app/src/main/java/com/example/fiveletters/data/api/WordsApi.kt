@@ -1,14 +1,12 @@
 package com.example.fiveletters.data.api
 
-import com.example.fiveletters.data.model.WordApi
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface WordsApi {
-    @GET("/words.json/randomWord?")
+    @GET("/word?")
     suspend fun getRandomWord(
-        @Query("minLength") minLength: Int,
-        @Query("maxLength") maxLength: Int
-    ): Response<WordApi>
+        @Query("length") length: Int,
+    ): Response<List<String>>
 }

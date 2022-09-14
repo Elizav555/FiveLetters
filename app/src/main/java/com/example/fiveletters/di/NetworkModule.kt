@@ -47,7 +47,7 @@ class NetworkModule {
     fun provideClient(
         apiKeyInterceptor: Interceptor
     ) = OkHttpClient.Builder()
-        .addInterceptor(apiKeyInterceptor)
+        //.addInterceptor(apiKeyInterceptor)
         .also {
             it.addInterceptor(
                 HttpLoggingInterceptor()
@@ -73,7 +73,8 @@ class NetworkModule {
         .build()
 
     companion object {
-        private const val BASE_URL = "http://api.wordnik.com/v4/"
+        // private const val BASE_URL = "http://api.wordnik.com/v4"
+        private const val BASE_URL = "https://random-word-api.herokuapp.com"
         private const val API_KEY = BuildConfig.API_KEY
         private const val QUERY_API_KEY = "apikey"
     }

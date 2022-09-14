@@ -6,6 +6,6 @@ import javax.inject.Inject
 class WordsInteractorImpl @Inject constructor(
     private val wordsRepository: WordsRepository
 ) : WordsInteractor {
-    override suspend fun getRandomWord(minLength: Int, maxLength: Int): Result<String> =
-        wordsRepository.getRandomWord(minLength, maxLength)
+    override suspend fun getRandomWord(length: Int): Result<String> =
+        wordsRepository.getRandomWord(length)
 }

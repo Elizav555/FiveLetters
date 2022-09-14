@@ -295,7 +295,7 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun getNewHiddenWord(lettersCount: LettersCount): String {
         return if (locale == Locale.ENGLISH) {
-            val result = wordsInteractor.getRandomWord(lettersCount.count, lettersCount.count)
+            val result = wordsInteractor.getRandomWord(lettersCount.count)
             if (result.isFailure) {
                 _errorMsgChannel.send(result.exceptionOrNull()?.message)
             }
