@@ -73,7 +73,7 @@ class NetworkModule {
         .build()
 
     companion object {
-        private const val BASE_URL = "http://api.wordnik.com/v4"
+        private const val BASE_URL = "http://api.wordnik.com/v4/"
         private const val API_KEY = BuildConfig.API_KEY
         private const val QUERY_API_KEY = "apikey"
     }
