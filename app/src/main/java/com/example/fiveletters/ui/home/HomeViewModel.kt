@@ -14,10 +14,10 @@ import com.example.fiveletters.domain.model.letter.LettersCount
 import com.example.fiveletters.domain.utils.mockedDictionary
 import com.example.fiveletters.domain.utils.myKeyboardKeys
 import com.example.fiveletters.ui.events.UIEvent
-import com.example.fiveletters.ui.state.DialogParams
-import com.example.fiveletters.ui.state.DialogType
-import com.example.fiveletters.ui.state.TextDialogType
-import com.example.fiveletters.ui.state.UIState
+import com.example.fiveletters.ui.model.DialogParams
+import com.example.fiveletters.ui.model.DialogType
+import com.example.fiveletters.ui.model.TextDialogType
+import com.example.fiveletters.ui.model.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Locale
 import javax.inject.Inject

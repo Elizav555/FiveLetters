@@ -6,7 +6,6 @@ import com.example.fiveletters.data.model.prefs.GamePrefs
 import com.example.fiveletters.di.coroutines.qualifiers.IoDispatcher
 import com.example.fiveletters.domain.interactors.preferences.GamePrefsInteractor
 import com.example.fiveletters.domain.model.Game
-import com.example.fiveletters.domain.model.keyboard.KeyClick
 import com.example.fiveletters.domain.preferences.Preferences
 import com.google.gson.reflect.TypeToken
 import javax.inject.Inject
@@ -24,7 +23,7 @@ class GamePrefsInteractorImpl @Inject constructor(
             preferences.setItem(key, gamePrefs)
         }
 
-    override suspend fun getGame(key: String, keyClicks: List<List<KeyClick>>?): Game? =
+    override suspend fun getGame(key: String): Game? =
         withContext(coroutineDispatcher) {
             val gamePrefs: GamePrefs? = preferences.getItem(
                 key,

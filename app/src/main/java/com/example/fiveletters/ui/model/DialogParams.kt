@@ -1,4 +1,4 @@
-package com.example.fiveletters.ui.state
+package com.example.fiveletters.ui.model
 
 data class DialogParams(
     val isOpened: Boolean = false,

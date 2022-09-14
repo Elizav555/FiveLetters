@@ -2,10 +2,9 @@ package com.example.fiveletters.ui.res.values
 
 import NonTranslatable
 import Translatable
+import com.example.fiveletters.domain.utils.RUSSIAN
 import java.util.Locale
 import registerSupportedLocales
-
-val RUSSIAN = Locale("ru")
 
 val supportedLocalesNow = registerSupportedLocales(RUSSIAN)
 

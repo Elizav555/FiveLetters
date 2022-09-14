@@ -1,7 +1,6 @@
 package com.example.fiveletters.domain.utils
 
 import com.example.fiveletters.domain.model.letter.LettersCount
-import com.example.fiveletters.ui.res.values.RUSSIAN
 import java.util.Locale
 
 fun mockedDictionary(locale: Locale? = Locale.ENGLISH, lettersCount: LettersCount) = when (locale) {

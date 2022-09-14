@@ -38,8 +38,8 @@ import com.example.fiveletters.ui.events.UIEvent
 import com.example.fiveletters.ui.res.values.dialogHelpTitle
 import com.example.fiveletters.ui.res.values.dialogSettingsTitle
 import com.example.fiveletters.ui.res.values.newGame
-import com.example.fiveletters.ui.state.AppBarIcon
-import com.example.fiveletters.ui.state.UIState
+import com.example.fiveletters.ui.model.AppBarIcon
+import com.example.fiveletters.ui.model.UIState
 import com.example.fiveletters.ui.widgets.DialogByParams
 import com.example.fiveletters.ui.widgets.KeyboardWidget
 import com.example.fiveletters.ui.widgets.LettersRow

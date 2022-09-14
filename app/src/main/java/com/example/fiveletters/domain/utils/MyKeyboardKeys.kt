@@ -4,7 +4,6 @@ import com.example.fiveletters.domain.model.keyboard.Key
 import com.example.fiveletters.domain.model.keyboard.KeyType
 import com.example.fiveletters.domain.model.keyboard.Keyboard
 import com.example.fiveletters.domain.model.keyboard.Row
-import com.example.fiveletters.ui.res.values.RUSSIAN
 import java.util.Locale
 
 fun myKeyboardKeys(locale: Locale? = Locale.ENGLISH) = when (locale) {
