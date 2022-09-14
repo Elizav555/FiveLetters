@@ -17,7 +17,6 @@ import com.example.fiveletters.ui.model.DialogParams
 import com.example.fiveletters.ui.res.values.apply
 import com.example.fiveletters.ui.res.values.cancel
 import com.example.fiveletters.ui.res.values.dialogSettingsTitle
-import com.example.fiveletters.ui.widgets.SettingsDialogContent
 import java.util.Locale
 
 

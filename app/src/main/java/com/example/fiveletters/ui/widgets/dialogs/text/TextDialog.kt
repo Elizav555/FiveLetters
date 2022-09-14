@@ -16,7 +16,6 @@ import com.example.fiveletters.ui.res.values.dialogLostTitle
 import com.example.fiveletters.ui.res.values.dialogWinText
 import com.example.fiveletters.ui.res.values.dialogWinTitle
 import com.example.fiveletters.ui.res.values.newGame
-import com.example.fiveletters.ui.widgets.TextDialogContent
 
 
 @Composable
