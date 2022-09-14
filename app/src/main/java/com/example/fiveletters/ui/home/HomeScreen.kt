@@ -23,6 +23,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -35,11 +36,12 @@ import com.example.fiveletters.R
 import com.example.fiveletters.domain.model.keyboard.KeyClick
 import com.example.fiveletters.domain.model.keyboard.KeyType
 import com.example.fiveletters.ui.events.UIEvent
-import com.example.fiveletters.ui.res.values.dialogHelpTitle
-import com.example.fiveletters.ui.res.values.dialogSettingsTitle
-import com.example.fiveletters.ui.res.values.newGame
 import com.example.fiveletters.ui.model.AppBarIcon
 import com.example.fiveletters.ui.model.UIState
+import com.example.fiveletters.ui.res.values.dialogHelpTitle
+import com.example.fiveletters.ui.res.values.dialogSettingsTitle
+import com.example.fiveletters.ui.res.values.error
+import com.example.fiveletters.ui.res.values.newGame
 import com.example.fiveletters.ui.widgets.DialogByParams
 import com.example.fiveletters.ui.widgets.KeyboardWidget
 import com.example.fiveletters.ui.widgets.LettersRow
@@ -64,7 +66,13 @@ fun HomeScreen(
         )
     )
 
-    val keyCLickMap:Map<KeyType, KeyClick>  = mapOf(
+    LaunchedEffect(key1 = Unit) {
+        viewModel.errorMsgEvent.collect {
+            snackbarHostState.showSnackbar(message = it ?: localization.error(), withDismissAction = true)
+        }
+    }
+
+    val keyCLickMap: Map<KeyType, KeyClick> = mapOf(
         KeyType.DEFAULT to { letter: String? ->
             letter?.let { viewModel.onEvent(UIEvent.LetterAddedEvent(it)) }
         },

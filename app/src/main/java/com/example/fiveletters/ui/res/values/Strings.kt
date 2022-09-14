@@ -87,6 +87,13 @@ val cancel = Translatable(
     )
 )
 
+val error = Translatable(
+    "Error",
+    hashMapOf(
+        RUSSIAN to "Ошибка",
+    )
+)
+
 val gotIt = Translatable(
     "Got It",
     hashMapOf(

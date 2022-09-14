@@ -22,20 +22,27 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val gamePrefsInteractor: GamePrefsInteractor,
-    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
-    private val wordsInteractor: WordsInteractor
+    private val wordsInteractor: WordsInteractor,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<UIState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<UIState> = _uiState
     private var locale: Locale = Locale.ENGLISH
+
+    private val _errorMsgChannel: Channel<String?> =
+        Channel(capacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val errorMsgEvent = _errorMsgChannel.receiveAsFlow()
 
     init {
         initGame()
@@ -46,10 +53,7 @@ class HomeViewModel @Inject constructor(
         return UIState(
             game = Game(
                 lettersCount = defaultLettersCount,
-                hiddenWord = mockedDictionary(
-                    locale,
-                    defaultLettersCount
-                ).random(),
+                hiddenWord = mockedDictionary(locale, defaultLettersCount).random(),
                 keyboard = myKeyboardKeys(
                     locale = locale
                 )
@@ -291,8 +295,11 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun getNewHiddenWord(lettersCount: LettersCount): String {
         return if (locale == Locale.ENGLISH) {
-            wordsInteractor.getRandomWord(lettersCount.count).getOrNull()
-                ?: mockedDictionary(locale, lettersCount).random()
+            val result = wordsInteractor.getRandomWord(lettersCount.count)
+            if (result.isFailure) {
+                _errorMsgChannel.send(result.exceptionOrNull()?.message)
+            }
+            result.getOrNull() ?: mockedDictionary(locale, lettersCount).random()
         } else {
             mockedDictionary(locale, lettersCount).random()
         }
