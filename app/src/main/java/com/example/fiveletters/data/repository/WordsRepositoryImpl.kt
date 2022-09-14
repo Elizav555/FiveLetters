@@ -13,8 +13,12 @@ class WordsRepositoryImpl @Inject constructor(
 ) : WordsRepository {
     override suspend fun getRandomWord(length: Int): Result<String> =
         withContext(coroutineDispatcher) {
-            val response = api.getRandomWord(length)
-            response.body()?.let { Result.success(it.first()) }
-                ?: Result.failure(Error(response.message()))
+            try {
+                val response = api.getRandomWord(length)
+                response.body()?.let { Result.success(it.first()) }
+                    ?: Result.failure(Error(response.message()))
+            } catch (ex: Exception) {
+                Result.failure(Error(ex.message))
+            }
         }
 }
