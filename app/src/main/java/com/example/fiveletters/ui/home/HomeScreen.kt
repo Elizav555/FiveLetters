@@ -1,8 +1,6 @@
 package com.example.fiveletters.ui.home
 
 import Vocabulary
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fiveletters.R
+import com.example.fiveletters.domain.model.Settings
 import com.example.fiveletters.domain.model.keyboard.KeyClick
 import com.example.fiveletters.domain.model.keyboard.KeyType
 import com.example.fiveletters.ui.events.UIEvent
@@ -54,7 +53,8 @@ import java.util.Locale
 @Composable
 fun HomeScreen(
     changeTheme: (isDark: Boolean) -> Unit,
-    changeLocale: (locale: Locale) -> Unit
+    changeLocale: (locale: Locale) -> Unit,
+    settings: Settings
 ) {
     val viewModel = hiltViewModel<HomeViewModel>()
 
@@ -62,10 +62,11 @@ fun HomeScreen(
     val snackbarHostState = remember {
         SnackbarHostState()
     }
+
     val localization = Vocabulary.localization
     viewModel.onEvent(
         UIEvent.SetLocaleEvent(
-            localization.locale
+            settings.locale
         )
     )
 
@@ -110,6 +111,7 @@ fun HomeScreen(
 
     HomeScreenLayout(
         uiState = uiState,
+        settings = settings,
         icons = icons,
         snackbarHostState = snackbarHostState,
         changeTheme = changeTheme,
@@ -122,6 +124,7 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenLayout(
     uiState: UIState,
+    settings: Settings,
     icons: List<AppBarIcon>,
     snackbarHostState: SnackbarHostState,
     changeTheme: (isDark: Boolean) -> Unit,
@@ -148,7 +151,7 @@ private fun HomeScreenLayout(
         },
         content = { padding ->
             if (uiState.dialogParams.isOpened) {
-                DialogByParams(uiState, changeTheme, changeLocale)
+                DialogByParams(uiState, settings, changeTheme, changeLocale)
             }
             if (uiState.isInited) {
                 HomeContent(

@@ -34,7 +34,7 @@ fun MainActivityContent() {
     val changeLocale = { locale: Locale -> viewModel.onEvent(MainEvent.ChangeLocaleEvent(locale)) }
     FiveLettersTheme(darkTheme = settingsState.isDarkMode ?: isSystemInDarkTheme()) {
         Localization(locale = settingsState.locale) {
-            HomeScreen(changeTheme, changeLocale)
+            HomeScreen(changeTheme, changeLocale, settingsState)
         }
     }
 }

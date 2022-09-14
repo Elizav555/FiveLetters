@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.example.fiveletters.domain.model.Settings
 import com.example.fiveletters.domain.model.letter.LettersCount
 import com.example.fiveletters.ui.res.theme.FiveLettersTheme
 import com.example.fiveletters.ui.res.values.chooseLettersCount
@@ -89,16 +90,15 @@ fun HelpDialogContent() {
 @Composable
 fun SettingsDialogContent(
     lettersCountState: MutableState<LettersCount>,
+    isDarkTheme:MutableState<Boolean>,
+    currentLocale:MutableState<Locale>,
     changeTheme: (isDark: Boolean) -> Unit,
-    currentLocale: MutableState<Locale>
 ) {
-    val isDarkInitial = isSystemInDarkTheme()
-    val isDarkTheme = remember {
-        mutableStateOf(isDarkInitial)
-    }
-
-    Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.verticalScroll(
-        rememberScrollState())) {
+    Column(
+        verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.verticalScroll(
+            rememberScrollState()
+        )
+    ) {
 
         Row(
             modifier = Modifier.fillMaxWidth(),

@@ -2,6 +2,7 @@ package com.example.fiveletters.ui.widgets
 
 import LocalLocalization
 import Vocabulary.localization
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -9,8 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import com.example.fiveletters.domain.model.letter.LettersCount
+import com.example.fiveletters.domain.model.Settings
 import com.example.fiveletters.domain.model.SettingsDialogParams
+import com.example.fiveletters.domain.model.letter.LettersCount
+import com.example.fiveletters.ui.model.DialogParams
+import com.example.fiveletters.ui.model.DialogType
+import com.example.fiveletters.ui.model.TextDialogType
+import com.example.fiveletters.ui.model.UIState
 import com.example.fiveletters.ui.res.values.apply
 import com.example.fiveletters.ui.res.values.cancel
 import com.example.fiveletters.ui.res.values.dialogConfirmText
@@ -23,15 +29,12 @@ import com.example.fiveletters.ui.res.values.dialogWinText
 import com.example.fiveletters.ui.res.values.dialogWinTitle
 import com.example.fiveletters.ui.res.values.gotIt
 import com.example.fiveletters.ui.res.values.newGame
-import com.example.fiveletters.ui.model.DialogParams
-import com.example.fiveletters.ui.model.DialogType
-import com.example.fiveletters.ui.model.TextDialogType
-import com.example.fiveletters.ui.model.UIState
 import java.util.Locale
 
 @Composable
 fun DialogByParams(
     uiState: UIState,
+    settings: Settings,
     changeTheme: (isDark: Boolean) -> Unit,
     changeLocale: (locale: Locale) -> Unit
 ) {
@@ -47,6 +50,7 @@ fun DialogByParams(
             SettingsDialog(
                 dialogParams = dialogParams,
                 newLettersCountState = newLettersCountState,
+                settings = settings,
                 changeTheme = changeTheme,
                 changeLocale = changeLocale
             )
@@ -84,13 +88,21 @@ private fun HelpDialog(dialogParams: DialogParams) {
 private fun SettingsDialog(
     dialogParams: DialogParams,
     newLettersCountState: MutableState<LettersCount>,
+    settings: Settings,
     changeTheme: (isDark: Boolean) -> Unit,
     changeLocale: (locale: Locale) -> Unit
 ) {
-    val localeInitial = LocalLocalization.current.locale
-    val currentLocale = remember {
-        mutableStateOf(localeInitial)
+    val systemMode = isSystemInDarkTheme()
+    val isDarkTheme = remember {
+        mutableStateOf(settings.isDarkMode ?: systemMode)
     }
+
+    val currentLocale = remember {
+        mutableStateOf(settings.locale)
+    }
+
+    val localLocale = LocalLocalization.current.locale
+
     AlertDialog(
         onDismissRequest = dialogParams.closeDialogAction,
         title = {
@@ -99,8 +111,9 @@ private fun SettingsDialog(
         text = {
             SettingsDialogContent(
                 lettersCountState = newLettersCountState,
+                isDarkTheme = isDarkTheme,
+                currentLocale = currentLocale,
                 changeTheme = changeTheme,
-                currentLocale = currentLocale
             )
         },
         confirmButton = {
@@ -109,7 +122,7 @@ private fun SettingsDialog(
                     dialogParams.confirmAction(
                         SettingsDialogParams(
                             lettersCount = newLettersCountState.value,
-                            isLocaleChanged = currentLocale.value != localeInitial,
+                            isLocaleChanged = localLocale != currentLocale.value,
                             locale = currentLocale.value
                         )
                     )
