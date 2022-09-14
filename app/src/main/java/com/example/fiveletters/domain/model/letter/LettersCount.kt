@@ -1,4 +1,4 @@
-package com.example.fiveletters.domain.model
+package com.example.fiveletters.domain.model.letter
 
 enum class LettersCount(val count: Int) {
     FIVE(5),
@@ -7,7 +7,7 @@ enum class LettersCount(val count: Int) {
 }
 
 fun lettersCountFromInt(count:Int)=when(count){
-    6->LettersCount.SIX
-    7->LettersCount.SEVEN
-    else->LettersCount.FIVE
+    6-> LettersCount.SIX
+    7-> LettersCount.SEVEN
+    else-> LettersCount.FIVE
 }

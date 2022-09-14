@@ -1,6 +1,6 @@
 package com.example.fiveletters.data.mappers
 
-import com.example.fiveletters.data.model.SettingsPrefs
+import com.example.fiveletters.data.model.prefs.SettingsPrefs
 import com.example.fiveletters.domain.model.Settings
 
 object SettingsMapper {

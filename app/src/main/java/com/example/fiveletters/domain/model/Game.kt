@@ -1,5 +1,8 @@
 package com.example.fiveletters.domain.model
 
+import com.example.fiveletters.domain.model.keyboard.Keyboard
+import com.example.fiveletters.domain.model.letter.LettersCount
+
 data class Game(
     val hiddenWord: String,
     val word: Word = Word(),

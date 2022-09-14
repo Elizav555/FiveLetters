@@ -1,6 +1,5 @@
 package com.example.fiveletters.ui.widgets
 
-import LocalLocalization
 import Vocabulary.localization
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,7 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import com.example.fiveletters.domain.model.LettersCount
+import com.example.fiveletters.domain.model.letter.LettersCount
 import com.example.fiveletters.ui.res.theme.FiveLettersTheme
 import com.example.fiveletters.ui.res.values.chooseLettersCount
 import com.example.fiveletters.ui.res.values.chooseLocale

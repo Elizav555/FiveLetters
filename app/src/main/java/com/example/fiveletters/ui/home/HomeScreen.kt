@@ -1,6 +1,5 @@
 package com.example.fiveletters.ui.home
 
-import LocalLocalization
 import Vocabulary
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,6 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fiveletters.R
+import com.example.fiveletters.domain.model.keyboard.KeyClick
+import com.example.fiveletters.domain.model.keyboard.KeyType
 import com.example.fiveletters.ui.events.UIEvent
 import com.example.fiveletters.ui.res.values.dialogHelpTitle
 import com.example.fiveletters.ui.res.values.dialogSettingsTitle
@@ -63,6 +64,18 @@ fun HomeScreen(
         )
     )
 
+    val keyCLickMap:Map<KeyType, KeyClick>  = mapOf(
+        KeyType.DEFAULT to { letter: String? ->
+            letter?.let { viewModel.onEvent(UIEvent.LetterAddedEvent(it)) }
+        },
+        KeyType.ERASE to {
+            viewModel.onEvent(UIEvent.ErasedEvent)
+        },
+        KeyType.SUBMIT to {
+            viewModel.onEvent(UIEvent.SubmitEvent)
+        }
+    )
+
     val icons = listOf(
         AppBarIcon(
             icon = Icons.Outlined.Refresh,
@@ -86,7 +99,8 @@ fun HomeScreen(
         icons = icons,
         snackbarHostState = snackbarHostState,
         changeTheme = changeTheme,
-        changeLocale = changeLocale
+        changeLocale = changeLocale,
+        keyClickMap = keyCLickMap
     )
 }
 
@@ -97,7 +111,8 @@ private fun HomeScreenLayout(
     icons: List<AppBarIcon>,
     snackbarHostState: SnackbarHostState,
     changeTheme: (isDark: Boolean) -> Unit,
-    changeLocale: (locale: Locale) -> Unit
+    changeLocale: (locale: Locale) -> Unit,
+    keyClickMap: Map<KeyType, KeyClick>
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -124,6 +139,7 @@ private fun HomeScreenLayout(
                 HomeContent(
                     modifier = Modifier.padding(padding),
                     uiState = uiState,
+                    keyClickMap = keyClickMap
                 )
             } else {
                 Loading()
@@ -148,7 +164,8 @@ private fun AppBarActions(icons: List<AppBarIcon>) {
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
-    uiState: UIState
+    uiState: UIState,
+    keyClickMap: Map<KeyType, KeyClick>
 ) {
     Column(
         modifier = modifier
@@ -173,7 +190,7 @@ fun HomeContent(
             }
         }
         KeyboardWidget(
-            keyboard = uiState.game.keyboard
+            keyboard = uiState.game.keyboard, keyClickMap = keyClickMap
         )
     }
 }

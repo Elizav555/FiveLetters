@@ -1,4 +1,4 @@
-package com.example.fiveletters.domain.model
+package com.example.fiveletters.domain.model.keyboard
 
 data class Keyboard(
     val rows: List<Row> = emptyList()

@@ -1,4 +1,4 @@
-package com.example.fiveletters.domain.model
+package com.example.fiveletters.domain.model.letter
 
 
 enum class LetterState {
