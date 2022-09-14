@@ -34,7 +34,6 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<UIState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<UIState> = _uiState
-    private var keyClicks: List<List<KeyClick>>? = null
     private var locale: Locale = Locale.ENGLISH
 
     init {
@@ -62,7 +61,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun initGame() = viewModelScope.launch {
-        val cachedGame: Game? = gamePrefsInteractor.getGame(GAME_KEY, keyClicks = keyClicks)
+        val cachedGame: Game? = gamePrefsInteractor.getGame(GAME_KEY)
         if (cachedGame != null) {
             _uiState.update {
                 it.copy(game = cachedGame, isInited = true)
