@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.Icon
@@ -49,7 +51,9 @@ fun HelpDialogContent() {
     Column(
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
     ) {
         val colorDesc = listOf(
             FiveLettersTheme.commonColorScheme.correctBoxColor to localization.helpCorrect(),
@@ -93,7 +97,8 @@ fun SettingsDialogContent(
         mutableStateOf(isDarkInitial)
     }
 
-    Column(verticalArrangement = Arrangement.SpaceBetween) {
+    Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.verticalScroll(
+        rememberScrollState())) {
 
         Row(
             modifier = Modifier.fillMaxWidth(),
