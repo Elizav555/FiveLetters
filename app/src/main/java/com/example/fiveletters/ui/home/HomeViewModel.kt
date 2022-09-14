@@ -71,10 +71,7 @@ class HomeViewModel @Inject constructor(
                 it.copy(game = cachedGame, isInited = true)
             }
         } else {
-            val word = getNewHiddenWord(_uiState.value.game.lettersCount) ?: mockedDictionary(
-                locale,
-                _uiState.value.game.lettersCount
-            ).random()
+            val word = getNewHiddenWord(_uiState.value.game.lettersCount)
             _uiState.update {
                 it.copy(game = it.game.copy(hiddenWord = word), isInited = true)
             }
@@ -185,10 +182,7 @@ class HomeViewModel @Inject constructor(
     ) =
         viewModelScope.launch {
             locale = newLocale
-            val word = getNewHiddenWord(lettersCount) ?: mockedDictionary(
-                locale,
-                lettersCount
-            ).random()
+            val word = getNewHiddenWord(lettersCount)
             _uiState.update {
                 getInitialUIState()
             }
@@ -295,8 +289,13 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    private suspend fun getNewHiddenWord(lettersCount: LettersCount): String? {
-        return wordsInteractor.getRandomWord(lettersCount.count).getOrNull()
+    private suspend fun getNewHiddenWord(lettersCount: LettersCount): String {
+        return if (locale == Locale.ENGLISH) {
+            wordsInteractor.getRandomWord(lettersCount.count).getOrNull()
+                ?: mockedDictionary(locale, lettersCount).random()
+        } else {
+            mockedDictionary(locale, lettersCount).random()
+        }
     }
 
     companion object {
