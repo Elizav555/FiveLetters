@@ -64,11 +64,6 @@ fun HomeScreen(
     }
 
     val localization = Vocabulary.localization
-    viewModel.onEvent(
-        UIEvent.SetLocaleEvent(
-            settings.locale
-        )
-    )
 
     LaunchedEffect(key1 = Unit) {
         viewModel.errorMsgEvent.collect {
