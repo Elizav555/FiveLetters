@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,6 +22,7 @@ import com.example.fiveletters.domain.model.keyboard.Key
 import com.example.fiveletters.domain.model.keyboard.KeyClick
 import com.example.fiveletters.domain.model.keyboard.KeyType
 import com.example.fiveletters.domain.model.keyboard.Keyboard
+import com.example.fiveletters.domain.model.letter.LetterState
 import com.example.fiveletters.ui.res.theme.FiveLettersTheme
 
 @Composable
@@ -42,6 +44,13 @@ fun KeyBox(modifier: Modifier = Modifier, key: Key, keyClick: KeyClick) {
         color = if (key.isWrong) FiveLettersTheme.commonColorScheme.wrongBoxColor else MaterialTheme.colorScheme.primary
     )
 }
+
+//@Composable
+//private fun colorByType(type:KeyType, isWrong:Boolean): Color = when (type) {
+//    KeyType.DEFAULT -> if (isWrong) FiveLettersTheme.commonColorScheme.wrongBoxColor else MaterialTheme.colorScheme.primary
+//    KeyType.SUBMIT -> MaterialTheme.colorScheme.onSurface
+//    KeyType.ERASE -> MaterialTheme.colorScheme.onSurface
+//}
 
 @Composable
 fun KeyRow(modifier: Modifier = Modifier, keys: List<Key>, keyClickMap: Map<KeyType, KeyClick>) {
