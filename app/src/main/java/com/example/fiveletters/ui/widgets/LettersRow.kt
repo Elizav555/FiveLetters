@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,9 +26,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fiveletters.domain.model.Word
 import com.example.fiveletters.domain.model.letter.Letter
 import com.example.fiveletters.domain.model.letter.LetterState
-import com.example.fiveletters.domain.model.Word
 import com.example.fiveletters.ui.res.theme.FiveLettersTheme
 
 @Composable
@@ -51,13 +52,13 @@ fun LetterBox(modifier: Modifier = Modifier, letter: Letter, index: Int, count: 
     Box(
         modifier = modifier
             .graphicsLayer { rotationY = rotation }
-            .padding(horizontal = 4.dp)
+            .padding(horizontal = if (count == 7) 2.dp else 4.dp)
             .border(BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary))
             .background(animatedColor.value)
             .padding(all = 8.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = letter.symbol, fontSize = if (count == 7) 28.sp else 32.sp)
+        Text(text = letter.symbol, fontSize = if (count == 7) 26.sp else 30.sp)
     }
 }
 
@@ -97,8 +98,7 @@ fun LettersRow(
 @Preview(showBackground = true, backgroundColor = 0x989a82)
 @Composable
 fun LettersRowPreview() {
-    Column {
-        LettersRow(word = Word(), count = 5)
+    Column(modifier = Modifier.width(310.dp)) {
         LettersRow(
             word = Word(
                 listOf(
@@ -110,6 +110,33 @@ fun LettersRowPreview() {
                 )
             ),
             count = 5
+        )
+        LettersRow(
+            word = Word(
+                listOf(
+                    Letter("L"),
+                    Letter("I"),
+                    Letter("M"),
+                    Letter("B"),
+                    Letter("O"),
+                    Letter("W")
+                )
+            ),
+            count = 6
+        )
+        LettersRow(
+            word = Word(
+                listOf(
+                    Letter("L"),
+                    Letter("I"),
+                    Letter("M"),
+                    Letter("B"),
+                    Letter("O"),
+                    Letter("W"),
+                    Letter("W")
+                )
+            ),
+            count = 7
         )
     }
 }
