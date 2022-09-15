@@ -51,7 +51,9 @@ class HomeViewModel @Inject constructor(
     fun onEvent(event: UIEvent) {
         when (event) {
             is UIEvent.LetterAddedEvent -> {
-                onLetterAdded(event.letter)
+                if (!_uiState.value.isEndGame) {
+                    onLetterAdded(event.letter)
+                }
             }
             is UIEvent.SubmitEvent -> {
                 if (!_uiState.value.isEndGame) {
@@ -59,7 +61,9 @@ class HomeViewModel @Inject constructor(
                 }
             }
             is UIEvent.ErasedEvent -> {
-                onErase()
+                if (!_uiState.value.isEndGame) {
+                    onErase()
+                }
             }
             is UIEvent.NewGameStartedEvent -> {
                 onNewGame()
