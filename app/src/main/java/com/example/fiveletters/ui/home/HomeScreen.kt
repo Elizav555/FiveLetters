@@ -1,22 +1,13 @@
 package com.example.fiveletters.ui.home
 
 import Vocabulary
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
@@ -29,10 +20,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fiveletters.R
 import com.example.fiveletters.domain.model.Settings
@@ -46,8 +35,6 @@ import com.example.fiveletters.ui.res.values.dialogSettingsTitle
 import com.example.fiveletters.ui.res.values.error
 import com.example.fiveletters.ui.res.values.newGame
 import com.example.fiveletters.ui.widgets.DialogByParams
-import com.example.fiveletters.ui.widgets.KeyboardWidget
-import com.example.fiveletters.ui.widgets.LettersRow
 import java.util.Locale
 
 @Composable
@@ -166,61 +153,4 @@ private fun HomeScreenLayout(
     )
 }
 
-@Composable
-private fun AppBarActions(icons: List<AppBarIcon>) {
-    icons.forEach {
-        IconButton(onClick = it.onClick) {
-            Icon(
-                imageVector = it.icon,
-                contentDescription = it.desc
-            )
-        }
-    }
-}
 
-
-@Composable
-fun HomeContent(
-    modifier: Modifier = Modifier,
-    uiState: UIState,
-    keyClickMap: Map<KeyType, KeyClick>
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(all = 8.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Top
-        ) {
-            repeat(uiState.game.attempts) {
-                val word = uiState.game.history.getOrNull(it) ?: uiState.game.word
-                LettersRow(
-                    word = word,
-                    count = uiState.game.lettersCount.count,
-                )
-            }
-        }
-        KeyboardWidget(
-            keyboard = uiState.game.keyboard, keyClickMap = keyClickMap
-        )
-    }
-}
-
-@Composable
-private fun Loading() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CircularProgressIndicator()
-    }
-}
