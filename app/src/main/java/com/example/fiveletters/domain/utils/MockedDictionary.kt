@@ -12,7 +12,7 @@ fun mockedDictionary(locale: Locale? = Locale.ENGLISH, lettersCount: LettersCoun
 private fun getEnglishDictionary(lettersCount: LettersCount) = when (lettersCount) {
     LettersCount.FIVE -> listOf(
         "adult",
-        " agent",
+        "agent",
         "alpha",
         "agile",
         "alien",
