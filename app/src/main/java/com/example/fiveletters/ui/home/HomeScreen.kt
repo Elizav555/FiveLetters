@@ -1,22 +1,13 @@
 package com.example.fiveletters.ui.home
 
 import Vocabulary
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
@@ -29,10 +20,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fiveletters.R
 import com.example.fiveletters.domain.model.Settings
@@ -46,8 +35,6 @@ import com.example.fiveletters.ui.res.values.dialogSettingsTitle
 import com.example.fiveletters.ui.res.values.error
 import com.example.fiveletters.ui.res.values.newGame
 import com.example.fiveletters.ui.widgets.DialogByParams
-import com.example.fiveletters.ui.widgets.KeyboardWidget
-import com.example.fiveletters.ui.widgets.LettersRow
 import java.util.Locale
 
 @Composable
@@ -76,13 +63,19 @@ fun HomeScreen(
 
     val keyCLickMap: Map<KeyType, KeyClick> = mapOf(
         KeyType.DEFAULT to { letter: String? ->
-            letter?.let { viewModel.onEvent(UIEvent.LetterAddedEvent(it)) }
+            if (!uiState.isEndGame) {
+                letter?.let { viewModel.onEvent(UIEvent.LetterAddedEvent(it)) }
+            }
         },
         KeyType.ERASE to {
-            viewModel.onEvent(UIEvent.ErasedEvent)
+            if (!uiState.isEndGame) {
+                viewModel.onEvent(UIEvent.ErasedEvent)
+            }
         },
         KeyType.SUBMIT to {
-            viewModel.onEvent(UIEvent.SubmitEvent)
+            if (!uiState.isEndGame) {
+                viewModel.onEvent(UIEvent.SubmitEvent)
+            }
         }
     )
 
