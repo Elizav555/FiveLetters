@@ -51,6 +51,11 @@ fun HomeScreen(
     }
 
     val localization = Vocabulary.localization
+    viewModel.onEvent(
+        UIEvent.SetLocaleEvent(
+            settings.locale
+        )
+    )
 
     LaunchedEffect(key1 = Unit) {
         viewModel.errorMsgEvent.collect {
@@ -63,19 +68,13 @@ fun HomeScreen(
 
     val keyCLickMap: Map<KeyType, KeyClick> = mapOf(
         KeyType.DEFAULT to { letter: String? ->
-            if (!uiState.isEndGame) {
-                letter?.let { viewModel.onEvent(UIEvent.LetterAddedEvent(it)) }
-            }
+            letter?.let { viewModel.onEvent(UIEvent.LetterAddedEvent(it)) }
         },
         KeyType.ERASE to {
-            if (!uiState.isEndGame) {
-                viewModel.onEvent(UIEvent.ErasedEvent)
-            }
+            viewModel.onEvent(UIEvent.ErasedEvent)
         },
         KeyType.SUBMIT to {
-            if (!uiState.isEndGame) {
-                viewModel.onEvent(UIEvent.SubmitEvent)
-            }
+            viewModel.onEvent(UIEvent.SubmitEvent)
         }
     )
 

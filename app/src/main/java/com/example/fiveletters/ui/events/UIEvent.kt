@@ -12,4 +12,5 @@ sealed class UIEvent {
     object HelpEvent : UIEvent()
     object ConfirmNewGameEvent : UIEvent()
     data class ApplySettingEvent(val settingsDialogParams: SettingsDialogParams?) : UIEvent()
+    data class SetLocaleEvent(val locale: Locale) : UIEvent()
 }
