@@ -48,6 +48,43 @@ class HomeViewModel @Inject constructor(
         initGame()
     }
 
+    fun onEvent(event: UIEvent) {
+        when (event) {
+            is UIEvent.LetterAddedEvent -> {
+                onLetterAdded(event.letter)
+            }
+            is UIEvent.SubmitEvent -> {
+                if (!_uiState.value.isEndGame) {
+                    onSubmit()
+                }
+            }
+            is UIEvent.ErasedEvent -> {
+                onErase()
+            }
+            is UIEvent.NewGameStartedEvent -> {
+                onNewGame()
+            }
+            is UIEvent.HelpEvent -> {
+                onHelp()
+            }
+            is UIEvent.OpenSettingsEvent -> {
+                onSettings()
+            }
+            is UIEvent.ConfirmNewGameEvent -> {
+                onConfirmNewGame()
+            }
+            is UIEvent.ApplySettingEvent -> {
+                onApplySettingsEvent(event.settingsDialogParams)
+            }
+            is UIEvent.SetLocaleEvent -> {
+                locale = event.locale
+            }
+        }
+        viewModelScope.launch {
+            gamePrefsInteractor.saveGame(GAME_KEY, _uiState.value.game)
+        }
+    }
+
     private fun getInitialUIState(): UIState {
         val defaultLettersCount = LettersCount.FIVE
         return UIState(
@@ -79,41 +116,6 @@ class HomeViewModel @Inject constructor(
             _uiState.update {
                 it.copy(game = it.game.copy(hiddenWord = word), isInited = true)
             }
-        }
-    }
-
-    fun onEvent(event: UIEvent) {
-        when (event) {
-            is UIEvent.LetterAddedEvent -> {
-                onLetterAdded(event.letter)
-            }
-            is UIEvent.SubmitEvent -> {
-                onSubmit()
-            }
-            is UIEvent.ErasedEvent -> {
-                onErase()
-            }
-            is UIEvent.NewGameStartedEvent -> {
-                onNewGame()
-            }
-            is UIEvent.HelpEvent -> {
-                onHelp()
-            }
-            is UIEvent.OpenSettingsEvent -> {
-                onSettings()
-            }
-            is UIEvent.ConfirmNewGameEvent -> {
-                onConfirmNewGame()
-            }
-            is UIEvent.ApplySettingEvent -> {
-                onApplySettingsEvent(event.settingsDialogParams)
-            }
-            is UIEvent.SetLocaleEvent -> {
-                locale = event.locale
-            }
-        }
-        viewModelScope.launch {
-            gamePrefsInteractor.saveGame(GAME_KEY, _uiState.value.game)
         }
     }
 
