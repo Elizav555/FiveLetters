@@ -5,5 +5,7 @@ import com.example.fiveletters.domain.model.Game
 data class UIState(
     val game: Game,
     val dialogParams: DialogParams,
-    val isInited: Boolean = false
-)
+    val isInited: Boolean = false,
+) {
+    val isEndGame get() = game.history.count() > game.guessesCount
+}
