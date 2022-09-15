@@ -75,6 +75,9 @@ class HomeViewModel @Inject constructor(
                 onApplySettingsEvent(event.settingsDialogParams)
             }
         }
+        viewModelScope.launch {
+            gamePrefsInteractor.saveGame(GAME_KEY, _uiState.value.game)
+        }
     }
 
     private fun getInitialUIState(): UIState {
