@@ -24,6 +24,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -208,7 +209,8 @@ class HomeViewModel @Inject constructor(
             gamePrefsInteractor.saveGame(GAME_KEY, _uiState.value.game)
         }
 
-    private fun onWonGame() {
+    private fun onWonGame() = viewModelScope.launch {
+        delay(getDelay())
         _uiState.update {
             it.copy(
                 dialogParams = it.dialogParams.copy(
@@ -236,7 +238,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun onLostGame() {
+    private fun onLostGame() = viewModelScope.launch {
+        delay(getDelay())
         _uiState.update {
             it.copy(
                 dialogParams = it.dialogParams.copy(
@@ -310,6 +313,8 @@ class HomeViewModel @Inject constructor(
             mockedDictionary(locale, lettersCount).random()
         }
     }
+
+    private fun getDelay() = (1500 + _uiState.value.game.lettersCount.count * 100).toLong()
 
     companion object {
         const val GAME_KEY = "game_key"
