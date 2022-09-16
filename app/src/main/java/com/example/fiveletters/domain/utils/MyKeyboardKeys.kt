@@ -39,11 +39,11 @@ private fun getEnglishKeys() =
                     Key("J", KeyType.DEFAULT),
                     Key("K", KeyType.DEFAULT),
                     Key("L", KeyType.DEFAULT),
+                    Key("⌫", KeyType.ERASE),
                 )
             ),
             Row(
                 keys = listOf(
-                    Key("⎆", KeyType.SUBMIT),
                     Key("Z", KeyType.DEFAULT),
                     Key("X", KeyType.DEFAULT),
                     Key("C", KeyType.DEFAULT),
@@ -51,7 +51,7 @@ private fun getEnglishKeys() =
                     Key("B", KeyType.DEFAULT),
                     Key("N", KeyType.DEFAULT),
                     Key("M", KeyType.DEFAULT),
-                    Key("⌫", KeyType.ERASE),
+                    Key("✓", KeyType.SUBMIT),
                 )
             ),
         )
@@ -89,11 +89,11 @@ private fun getRussianKeys() =
                     Key("Д", KeyType.DEFAULT),
                     Key("Ж", KeyType.DEFAULT),
                     Key("Э", KeyType.DEFAULT),
+                    Key("⌫", KeyType.ERASE),
                 )
             ),
             Row(
                 keys = listOf(
-                    Key("⎆", KeyType.SUBMIT),
                     Key("Я", KeyType.DEFAULT),
                     Key("Ч", KeyType.DEFAULT),
                     Key("С", KeyType.DEFAULT),
@@ -103,7 +103,7 @@ private fun getRussianKeys() =
                     Key("Ь", KeyType.DEFAULT),
                     Key("Б", KeyType.DEFAULT),
                     Key("Ю", KeyType.DEFAULT),
-                    Key("⌫", KeyType.ERASE),
+                    Key("✓", KeyType.SUBMIT),
                 )
             ),
         )

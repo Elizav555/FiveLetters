@@ -110,6 +110,7 @@ data class CommonColorScheme(
     val correctBoxColor: Color = Color(0xC069E10F),
     val wrongPositionBoxColor: Color = Color(0xBFE1DE0F),
     val wrongBoxColor: Color = Color(0xBF373837),
+    val wrongKeyColor: Color = Color(0x804E4F4E),
 ) {
 
     fun toColorScheme() = ColorScheme(
