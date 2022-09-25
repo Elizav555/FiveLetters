@@ -27,5 +27,11 @@ This project was implemented to practice with Compose
 - Clean Architecture
 - Shared Preferences
 
-[Screencast](https://user-images.githubusercontent.com/78415957/191793128-c7b77eda-26ed-42de-a81d-051080a5b844.mp4)
+## Screenshots 
+<img src="https://user-images.githubusercontent.com/78415957/192134720-0e17e5d9-e7b1-46a2-a5c3-e485ed74ec83.jpg" alt="Game Russian" height="450"/>
+<img src="https://user-images.githubusercontent.com/78415957/192134719-04ce8ca9-f47c-4c0d-88a6-a868e7771252.jpg" alt="Game English" height="450"/>
+<img src="https://user-images.githubusercontent.com/78415957/192134718-0072c9c5-b2bb-4b33-8ace-cd965aeb9503.jpg" alt="Info Dialog" height="450"/>
+<img src="https://user-images.githubusercontent.com/78415957/192134716-6d25637b-d656-46eb-b1eb-be0555d02ced.jpg" alt="Settings Dialog" height="450"/>
+<img src="https://user-images.githubusercontent.com/78415957/192134721-74628eee-ea64-4540-bf39-b9cc26fc2492.jpg" alt="Won Dialog" height="450"/>
 
+## [Screencast](https://user-images.githubusercontent.com/78415957/191793128-c7b77eda-26ed-42de-a81d-051080a5b844.mp4)
